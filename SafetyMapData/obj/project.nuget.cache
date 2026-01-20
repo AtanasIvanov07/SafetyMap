@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "TD9PLPsknpk=",
+  "dgSpecHash": "ns9z0vHTfXY=",
   "success": true,
-  "projectFilePath": "c:\\Users\\2026\\Desktop\\SafetyMap-main\\SafetyMap-main\\SafetyMapData\\SafetyMapData.csproj",
+  "projectFilePath": "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\2026\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\2026\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

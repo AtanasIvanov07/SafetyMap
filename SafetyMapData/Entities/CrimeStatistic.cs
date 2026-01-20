@@ -8,12 +8,12 @@ namespace SafetyMapData.Entities
 {
     public class CrimeStatistic
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int NeighborhoodId { get; set; }
+        public Guid NeighborhoodId { get; set; }
         public virtual Neighborhood Neighborhood { get; set; }
 
-        public int CrimeCategoryId { get; set; }
+        public Guid CrimeCategoryId { get; set; }
         public virtual CrimeCategory CrimeCategory { get; set; }
 
    

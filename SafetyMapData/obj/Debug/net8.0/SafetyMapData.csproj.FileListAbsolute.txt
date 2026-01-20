@@ -22,3 +22,16 @@ C:\Users\2026\Desktop\SafetyMap-main\SafetyMap-main\SafetyMapData\obj\Debug\net8
 C:\Users\2026\Desktop\SafetyMap-main\SafetyMap-main\SafetyMapData\obj\Debug\net8.0\refint\SafetyMapData.dll
 C:\Users\2026\Desktop\SafetyMap-main\SafetyMap-main\SafetyMapData\obj\Debug\net8.0\SafetyMapData.pdb
 C:\Users\2026\Desktop\SafetyMap-main\SafetyMap-main\SafetyMapData\obj\Debug\net8.0\ref\SafetyMapData.dll
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\bin\Debug\net8.0\SafetyMapData.deps.json
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\bin\Debug\net8.0\SafetyMapData.dll
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\bin\Debug\net8.0\SafetyMapData.pdb
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.csproj.AssemblyReference.cache
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.AssemblyInfoInputs.cache
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.AssemblyInfo.cs
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.csproj.CoreCompileInputs.cache
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.sourcelink.json
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.dll
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\refint\SafetyMapData.dll
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.pdb
+C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\ref\SafetyMapData.dll
