@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SafetyMapWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b54d128dbe9330943ffa42e3a1a5483896be0810")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18edae463e165ab3e3e19e4b6bd34dfdd779c927")]
 [assembly: System.Reflection.AssemblyProductAttribute("SafetyMapWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SafetyMapWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

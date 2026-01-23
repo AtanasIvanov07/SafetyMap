@@ -50,7 +50,7 @@ namespace SafetyMapData
             // C. Relationship: Neighborhood <-> UserSubscription
             builder.Entity<UserSubscription>()
                 .HasOne(us => us.Neighborhood)
-                .WithMany(n => n.Subscribers)
+                .WithMany(n => n.UserSubscriptions)
                 .HasForeignKey(us => us.NeighborhoodId)
                 .OnDelete(DeleteBehavior.Cascade); // If Neighborhood is deleted, delete subscriptions
 
@@ -71,7 +71,7 @@ namespace SafetyMapData
             // Relationship: CrimeCategory <-> CrimeStatistic
             builder.Entity<CrimeStatistic>()
                 .HasOne(cs => cs.CrimeCategory)
-                .WithMany(cc => cc.Statistics)
+                .WithMany(cc => cc.CrimeStatistics)
                 .HasForeignKey(cs => cs.CrimeCategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 

@@ -9,9 +9,9 @@ namespace SafetyMapData.Entities
     public class CrimeCategory
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty; 
+        public string Name { get; set; } = string.Empty;
         public string ColorCode { get; set; } = string.Empty;
 
-        public ICollection<CrimeStatistic> Statistics { get; set; } = new List<CrimeStatistic>();
+        public ICollection<CrimeStatistic> CrimeStatistics { get; set; } = new List<CrimeStatistic>();
     }
 }
