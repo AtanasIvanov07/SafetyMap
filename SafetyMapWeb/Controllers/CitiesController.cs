@@ -57,7 +57,6 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CityCreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -104,7 +103,6 @@ namespace SafetyMapWeb.Controllers
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, CityEditViewModel model)
         {
             if (id != model.Id)
@@ -150,7 +148,6 @@ namespace SafetyMapWeb.Controllers
 
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var city = await _context.Cities.FindAsync(id);

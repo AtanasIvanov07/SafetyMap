@@ -53,9 +53,7 @@ namespace SafetyMapWeb.Controllers
             return View();
         }
 
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CrimeCategoryCreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -97,9 +95,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
-        [HttpGet]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, CrimeCategoryEditViewModel model)
         {
             if (id != model.Id)
@@ -143,7 +139,6 @@ namespace SafetyMapWeb.Controllers
 
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var crimeCategory = await _context.CrimeCategories.FindAsync(id);
