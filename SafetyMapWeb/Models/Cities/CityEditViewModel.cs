@@ -15,5 +15,7 @@ namespace SafetyMapWeb.Models.Cities
         public string State { get; set; } = string.Empty;
 
         public string ImageUrl { get; set; } = string.Empty;
+
+        public int Population { get; set; }
     }
 }

@@ -1,0 +1,60 @@
+@model IEnumerable<SafetyMapWeb.Models.CrimeStatistics.CrimeStatisticIndexViewModel>
+
+@{
+    ViewData["Title"] = "Crime Statistics";
+}
+
+<h1>Crime Statistics</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NeighborhoodName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CrimeCategoryName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CountOfCrimes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrendPercentage)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NeighborhoodName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CrimeCategoryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CountOfCrimes)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.TrendPercentage)%
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

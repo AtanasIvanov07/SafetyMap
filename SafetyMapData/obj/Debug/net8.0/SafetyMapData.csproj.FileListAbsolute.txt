@@ -35,3 +35,16 @@ C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.dll
 C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\refint\SafetyMapData.dll
 C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.pdb
 C:\Users\2026\Desktop\SafetyMap\SafetyMapData\obj\Debug\net8.0\ref\SafetyMapData.dll
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\bin\Debug\net8.0\SafetyMapData.deps.json
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\bin\Debug\net8.0\SafetyMapData.dll
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\bin\Debug\net8.0\SafetyMapData.pdb
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.csproj.AssemblyReference.cache
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.AssemblyInfoInputs.cache
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.AssemblyInfo.cs
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.csproj.CoreCompileInputs.cache
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.sourcelink.json
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.dll
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\refint\SafetyMapData.dll
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\SafetyMapData.pdb
+C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapData\obj\Debug\net8.0\ref\SafetyMapData.dll

@@ -12,6 +12,7 @@ namespace SafetyMapData.Entities
         public string Name { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
+        public int Population { get; set; }
 
         public ICollection<Neighborhood> Neighborhoods { get; set; } = new List<Neighborhood>();
     }
