@@ -16,6 +16,7 @@ namespace SafetyMapWeb.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var crimeStatistics = await _context.CrimeStatistics
@@ -34,6 +35,7 @@ namespace SafetyMapWeb.Controllers
             return View(crimeStatistics);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();
@@ -80,6 +82,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null) return NotFound();
@@ -126,6 +129,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null) return NotFound();

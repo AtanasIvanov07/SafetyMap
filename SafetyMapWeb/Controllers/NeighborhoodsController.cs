@@ -16,6 +16,7 @@ namespace SafetyMapWeb.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var neighborhoods = await _context.Neighborhoods
@@ -31,6 +32,7 @@ namespace SafetyMapWeb.Controllers
             return View(neighborhoods);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();
@@ -74,6 +76,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null) return NotFound();
@@ -118,6 +121,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null) return NotFound();
