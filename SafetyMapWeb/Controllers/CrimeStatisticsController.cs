@@ -48,7 +48,8 @@ namespace SafetyMapWeb.Controllers
             return View(crimeStatistic);
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
             var model = new CrimeStatisticCreateViewModel();
             model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();

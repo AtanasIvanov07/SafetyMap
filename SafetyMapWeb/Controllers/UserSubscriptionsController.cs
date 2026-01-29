@@ -15,7 +15,7 @@ namespace SafetyMapWeb.Controllers
         {
             _context = context;
         }
-
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var subscriptions = await _context.UserSubscriptions
@@ -30,7 +30,7 @@ namespace SafetyMapWeb.Controllers
                 .ToListAsync();
             return View(subscriptions);
         }
-
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();
@@ -44,7 +44,8 @@ namespace SafetyMapWeb.Controllers
             return View(subscription);
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
             var model = new UserSubscriptionCreateViewModel();
             model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
@@ -71,6 +72,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null) return NotFound();
@@ -111,6 +113,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null) return NotFound();

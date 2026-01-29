@@ -44,7 +44,8 @@ namespace SafetyMapWeb.Controllers
             return View(neighborhood);
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
             var model = new NeighborhoodCreateViewModel();
             model.Cities = _context.Cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
