@@ -161,23 +161,16 @@ namespace SafetyMapData.Migrations
 
             modelBuilder.Entity("SafetyMapData.Entities.City", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Population")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -186,11 +179,9 @@ namespace SafetyMapData.Migrations
 
             modelBuilder.Entity("SafetyMapData.Entities.CrimeCategory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ColorCode")
                         .IsRequired()
@@ -207,20 +198,18 @@ namespace SafetyMapData.Migrations
 
             modelBuilder.Entity("SafetyMapData.Entities.CrimeStatistic", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CountOfCrimes")
                         .HasColumnType("int");
 
-                    b.Property<int>("CrimeCategoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CrimeCategoryId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("NeighborhoodId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("NeighborhoodId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("TrendPercentage")
                         .HasColumnType("float");
@@ -240,14 +229,12 @@ namespace SafetyMapData.Migrations
 
             modelBuilder.Entity("SafetyMapData.Entities.Neighborhood", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CityId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -344,14 +331,12 @@ namespace SafetyMapData.Migrations
 
             modelBuilder.Entity("SafetyMapData.Entities.UserSubscription", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("NeighborhoodId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("NeighborhoodId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("SubscribedAt")
                         .HasColumnType("datetime2");
@@ -424,7 +409,7 @@ namespace SafetyMapData.Migrations
             modelBuilder.Entity("SafetyMapData.Entities.CrimeStatistic", b =>
                 {
                     b.HasOne("SafetyMapData.Entities.CrimeCategory", "CrimeCategory")
-                        .WithMany("Statistics")
+                        .WithMany("CrimeStatistics")
                         .HasForeignKey("CrimeCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -454,7 +439,7 @@ namespace SafetyMapData.Migrations
             modelBuilder.Entity("SafetyMapData.Entities.UserSubscription", b =>
                 {
                     b.HasOne("SafetyMapData.Entities.Neighborhood", "Neighborhood")
-                        .WithMany("Subscribers")
+                        .WithMany("UserSubscriptions")
                         .HasForeignKey("NeighborhoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -477,14 +462,14 @@ namespace SafetyMapData.Migrations
 
             modelBuilder.Entity("SafetyMapData.Entities.CrimeCategory", b =>
                 {
-                    b.Navigation("Statistics");
+                    b.Navigation("CrimeStatistics");
                 });
 
             modelBuilder.Entity("SafetyMapData.Entities.Neighborhood", b =>
                 {
                     b.Navigation("CrimeStatistics");
 
-                    b.Navigation("Subscribers");
+                    b.Navigation("UserSubscriptions");
                 });
 
             modelBuilder.Entity("SafetyMapData.Entities.UserIdentity", b =>

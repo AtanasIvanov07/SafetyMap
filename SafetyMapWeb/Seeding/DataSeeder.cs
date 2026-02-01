@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using SafetyMapData.Entities;
-
+using SafetyMapData;
+using Microsoft.EntityFrameworkCore;
 namespace SafetyMapWeb.Seeding
 {
     public static class DataSeeder

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SafetyMapData.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityFix : Migration
+    public partial class AddedSeederAndRoles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,11 +56,9 @@ namespace SafetyMapData.Migrations
                 name: "Cities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Population = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,8 +69,7 @@ namespace SafetyMapData.Migrations
                 name: "CrimeCategories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ColorCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -191,13 +188,12 @@ namespace SafetyMapData.Migrations
                 name: "Neighborhoods",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SafetyRating = table.Column<int>(type: "int", nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
-                    CityId = table.Column<int>(type: "int", nullable: false)
+                    CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -214,10 +210,9 @@ namespace SafetyMapData.Migrations
                 name: "CrimeStatistics",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NeighborhoodId = table.Column<int>(type: "int", nullable: false),
-                    CrimeCategoryId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NeighborhoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CrimeCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CountOfCrimes = table.Column<int>(type: "int", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     TrendPercentage = table.Column<double>(type: "float", nullable: false)
@@ -243,10 +238,9 @@ namespace SafetyMapData.Migrations
                 name: "UserSubscriptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NeighborhoodId = table.Column<int>(type: "int", nullable: false),
+                    NeighborhoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubscribedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
