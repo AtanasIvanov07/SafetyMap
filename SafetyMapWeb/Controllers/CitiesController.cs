@@ -24,8 +24,7 @@ namespace SafetyMapWeb.Controllers
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    State = c.State,
-                    ImageUrl = c.ImageUrl,
+
                     Population = c.Population
                 })
                 .ToListAsync();
@@ -66,8 +65,7 @@ namespace SafetyMapWeb.Controllers
                 {
                     Id = Guid.NewGuid(),
                     Name = model.Name,
-                    State = model.State,
-                    ImageUrl = model.ImageUrl,
+
                     Population = model.Population
                 };
 
@@ -96,8 +94,7 @@ namespace SafetyMapWeb.Controllers
             {
                 Id = city.Id,
                 Name = city.Name,
-                State = city.State,
-                ImageUrl = city.ImageUrl,
+
                 Population = city.Population
             };
 
@@ -121,8 +118,7 @@ namespace SafetyMapWeb.Controllers
                     return NotFound();
                 }
                 city.Name = model.Name;
-                city.State = model.State;
-                city.ImageUrl = model.ImageUrl;
+
                 city.Population = model.Population;
 
                 _context.Update(city);

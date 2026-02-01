@@ -7,19 +7,21 @@ using SafetyMapWeb.Seeding;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<SafetyMapDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// Configure Identity with Roles
 builder.Services.AddDefaultIdentity<UserIdentity>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequiredLength = 5;
 })
-.AddEntityFrameworkStores<SafetyMapDbContext>()
-.AddRoles<IdentityRole>();
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<SafetyMapDbContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -27,12 +29,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddControllersWithViews();
-// builder.Services.AddRazorPages(); // Not needed if using MVC Views for auth
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -45,9 +44,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -56,12 +54,18 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-
-
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    await DataSeeder.SeedRolesAsync(services);
+    try
+    {
+        await DataSeeder.SeedRolesAsync(services);
+        await DataSeeder.SeedCitiesAsync(services);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An error occurred while seeding the database: " + ex.Message);
+    }
 }
 
 app.Run();
