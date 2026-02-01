@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SafetyMapData;
 using SafetyMapData.Entities;
+using SafetyMapWeb.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +13,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<SafetyMapDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<UserIdentity>(options => 
+builder.Services.AddDefaultIdentity<UserIdentity>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; 
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequiredLength = 5;
 })
-.AddEntityFrameworkStores<SafetyMapDbContext>();
+.AddEntityFrameworkStores<SafetyMapDbContext>()
+.AddRoles<IdentityRole>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -53,5 +55,13 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DataSeeder.SeedRolesAsync(services);
+}
 
 app.Run();
