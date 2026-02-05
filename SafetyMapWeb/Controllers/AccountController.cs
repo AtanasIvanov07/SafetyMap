@@ -31,7 +31,7 @@ namespace SafetyMapWeb.Controllers
             return View();
         }
 
-        
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -43,7 +43,7 @@ namespace SafetyMapWeb.Controllers
 
             var user = new UserIdentity
             {
-                UserName = model.Email, 
+                UserName = model.UserName,
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName
@@ -65,7 +65,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
-    
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login()
@@ -77,7 +77,7 @@ namespace SafetyMapWeb.Controllers
             return View();
         }
 
-     
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -87,7 +87,7 @@ namespace SafetyMapWeb.Controllers
                 return View(model);
             }
 
-         
+
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
 
             if (result.Succeeded)
@@ -99,7 +99,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
-      
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {

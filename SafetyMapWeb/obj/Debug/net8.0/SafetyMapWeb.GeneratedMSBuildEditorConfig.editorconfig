@@ -11,157 +11,161 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SafetyMapWeb
 build_property.RootNamespace = SafetyMapWeb
-build_property.ProjectDir = c:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\
+build_property.ProjectDir = C:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = c:\Users\2026\Desktop\SafetyMap\SafetyMapWeb
+build_property.MSBuildProjectDirectory = C:\Users\2026\Desktop\SafetyMap\SafetyMapWeb
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Areas/Identity/Pages/_ViewStart.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Areas/Identity/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Account/Login.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Account/Register.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Create.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Delete.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Details.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Edit.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Index.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Cities/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0aWVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Create.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVDYXRlZ29yaWVzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Delete.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVDYXRlZ29yaWVzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Details.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVDYXRlZ29yaWVzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Edit.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVDYXRlZ29yaWVzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Index.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeCategories/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVDYXRlZ29yaWVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Create.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVTdGF0aXN0aWNzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Delete.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVTdGF0aXN0aWNzXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Details.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVTdGF0aXN0aWNzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Edit.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVTdGF0aXN0aWNzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Index.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/CrimeStatistics/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3JpbWVTdGF0aXN0aWNzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Home/Index.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Home/Privacy.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Create.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Map/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFwXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmVpZ2hib3Job29kc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Delete.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmVpZ2hib3Job29kc1xEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Details.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmVpZ2hib3Job29kc1xEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Edit.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmVpZ2hib3Job29kc1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Index.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Neighborhoods/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmVpZ2hib3Job29kc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/Error.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/_LoginPartial.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Create.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclN1YnNjcmlwdGlvbnNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Delete.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclN1YnNjcmlwdGlvbnNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Details.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclN1YnNjcmlwdGlvbnNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Edit.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclN1YnNjcmlwdGlvbnNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Index.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/UserSubscriptions/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclN1YnNjcmlwdGlvbnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/_ViewImports.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/_ViewStart.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/_Layout.cshtml]
+[C:/Users/2026/Desktop/SafetyMap/SafetyMapWeb/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-o2xzsls32p

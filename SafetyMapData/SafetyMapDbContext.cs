@@ -17,7 +17,6 @@ namespace SafetyMapData
         {
         }
 
-        // 1. Register your tables
         public DbSet<City> Cities { get; set; }
         public DbSet<Neighborhood> Neighborhoods { get; set; }
         public DbSet<CrimeCategory> CrimeCategories { get; set; }

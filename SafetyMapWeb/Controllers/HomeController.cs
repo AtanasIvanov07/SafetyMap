@@ -15,13 +15,9 @@ namespace SafetyMapWeb.Controllers
 
         public IActionResult Index()
         {
-            if (User?.Identity?.IsAuthenticated ?? false)
-            {
-                return RedirectToAction("Index", "Home");
-            }
             return View();
         }
-         
+
 
         public IActionResult Privacy()
         {
