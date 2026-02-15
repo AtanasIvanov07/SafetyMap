@@ -1,7 +1,6 @@
 ﻿using SafetyMapWeb.Models;
-using SafetyMapData.Entities;
+using SafetyMap.Core.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -9,15 +8,11 @@ namespace SafetyMapWeb.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<UserIdentity> _userManager;
-        private readonly SignInManager<UserIdentity> _signInManager;
+        private readonly IAccountService _accountService;
 
-        public AccountController(
-            UserManager<UserIdentity> userManager,
-            SignInManager<UserIdentity> signInManager)
+        public AccountController(IAccountService accountService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -41,19 +36,11 @@ namespace SafetyMapWeb.Controllers
                 return View(model);
             }
 
-            var user = new UserIdentity
-            {
-                UserName = model.UserName,
-                Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _accountService.RegisterAsync(
+                model.UserName, model.Email, model.FirstName, model.LastName, model.Password);
 
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -87,10 +74,9 @@ namespace SafetyMapWeb.Controllers
                 return View(model);
             }
 
+            var succeeded = await _accountService.LoginAsync(model.UserName, model.Password);
 
-            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
-
-            if (result.Succeeded)
+            if (succeeded)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -103,7 +89,7 @@ namespace SafetyMapWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _accountService.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
     }

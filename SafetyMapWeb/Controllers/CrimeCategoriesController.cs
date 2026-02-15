@@ -1,32 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SafetyMapData;
-using SafetyMapData.Entities;
+using SafetyMap.Core.Contracts;
+using SafetyMap.Core.DTOs.CrimeCategory;
 using SafetyMapWeb.Models.CrimeCategories;
 
 namespace SafetyMapWeb.Controllers
 {
     public class CrimeCategoriesController : Controller
     {
-        private readonly SafetyMapDbContext _context;
+        private readonly ICrimeCategoryService _crimeCategoryService;
 
-        public CrimeCategoriesController(SafetyMapDbContext context)
+        public CrimeCategoriesController(ICrimeCategoryService crimeCategoryService)
         {
-            _context = context;
+            _crimeCategoryService = crimeCategoryService;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.CrimeCategories
-                 .Select(c => new CrimeCategoryIndexViewModel
-                 {
-                     Id = c.Id,
-                     Name = c.Name,
-                     ColorCode = c.ColorCode
-                 })
-                 .ToListAsync();
+            var categories = await _crimeCategoryService.GetAllAsync();
 
-            return View(categories);
+            var viewModels = categories.Select(c => new CrimeCategoryIndexViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ColorCode = c.ColorCode
+            }).ToList();
+
+            return View(viewModels);
         }
 
         [HttpGet]
@@ -37,8 +37,7 @@ namespace SafetyMapWeb.Controllers
                 return NotFound();
             }
 
-            var crimeCategory = await _context.CrimeCategories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var crimeCategory = await _crimeCategoryService.GetByIdAsync(id.Value);
             if (crimeCategory == null)
             {
                 return NotFound();
@@ -58,14 +57,13 @@ namespace SafetyMapWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var crimeCategory = new CrimeCategory
+                var dto = new CrimeCategoryCreateDTO
                 {
-                    Id = Guid.NewGuid(),
                     Name = model.Name,
                     ColorCode = model.ColorCode
                 };
-                _context.Add(crimeCategory);
-                await _context.SaveChangesAsync();
+
+                await _crimeCategoryService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -79,7 +77,7 @@ namespace SafetyMapWeb.Controllers
                 return NotFound();
             }
 
-            var crimeCategory = await _context.CrimeCategories.FindAsync(id);
+            var crimeCategory = await _crimeCategoryService.GetByIdAsync(id.Value);
             if (crimeCategory == null)
             {
                 return NotFound();
@@ -105,15 +103,14 @@ namespace SafetyMapWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var crimeCategory = await _context.CrimeCategories.FindAsync(id);
-                if (crimeCategory == null)
+                var dto = new CrimeCategoryEditDTO
                 {
-                    return NotFound();
-                }
-                crimeCategory.Name = model.Name;
-                crimeCategory.ColorCode = model.ColorCode;
-                _context.Update(crimeCategory);
-                await _context.SaveChangesAsync();
+                    Id = model.Id,
+                    Name = model.Name,
+                    ColorCode = model.ColorCode
+                };
+
+                await _crimeCategoryService.UpdateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -127,8 +124,7 @@ namespace SafetyMapWeb.Controllers
                 return NotFound();
             }
 
-            var crimeCategory = await _context.CrimeCategories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var crimeCategory = await _crimeCategoryService.GetByIdAsync(id.Value);
             if (crimeCategory == null)
             {
                 return NotFound();
@@ -141,13 +137,7 @@ namespace SafetyMapWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var crimeCategory = await _context.CrimeCategories.FindAsync(id);
-            if (crimeCategory != null)
-            {
-                _context.CrimeCategories.Remove(crimeCategory);
-            }
-
-            await _context.SaveChangesAsync();
+            await _crimeCategoryService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

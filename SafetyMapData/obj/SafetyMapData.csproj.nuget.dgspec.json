@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj": {}
+    "c:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj": {}
   },
   "projects": {
-    "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj": {
+    "c:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj",
+        "projectUniqueName": "c:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj",
         "projectName": "SafetyMapData",
-        "projectPath": "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj",
+        "projectPath": "c:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\SafetyMapData.csproj",
         "packagesPath": "C:\\Users\\2026\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\obj\\",
+        "outputPath": "c:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapData\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

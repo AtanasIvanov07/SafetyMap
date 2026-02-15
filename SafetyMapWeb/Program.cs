@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SafetyMap.Core.Contracts;
+using SafetyMap.Core.Services;
 using SafetyMapData;
 using SafetyMapData.Entities;
 using SafetyMapWeb.Seeding;
@@ -27,6 +29,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
 });
+
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<ICrimeCategoryService, CrimeCategoryService>();
+builder.Services.AddScoped<INeighborhoodService, NeighborhoodService>();
+builder.Services.AddScoped<ICrimeStatisticService, CrimeStatisticService>();
+builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
+builder.Services.AddScoped<IMapService, MapService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddControllersWithViews();
 

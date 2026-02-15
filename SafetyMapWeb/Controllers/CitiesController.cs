@@ -1,35 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SafetyMapData;
-using SafetyMapData.Entities;
+using SafetyMap.Core.Contracts;
+using SafetyMap.Core.DTOs.City;
 using SafetyMapWeb.Models.Cities;
 
 namespace SafetyMapWeb.Controllers
 {
     public class CitiesController : Controller
     {
-        private readonly SafetyMapDbContext _context;
+        private readonly ICityService _cityService;
 
-        public CitiesController(SafetyMapDbContext context)
+        public CitiesController(ICityService cityService)
         {
-            _context = context;
-
+            _cityService = cityService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var cities = await _context.Cities
-                .Select(c => new CityIndexViewModel
-                {
-                    Id = c.Id,
-                    Name = c.Name,
+            var cities = await _cityService.GetAllAsync();
 
-                    Population = c.Population
-                })
-                .ToListAsync();
+            var viewModels = cities.Select(c => new CityIndexViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Population = c.Population
+            }).ToList();
 
-            return View(cities);
+            return View(viewModels);
         }
 
         [HttpGet]
@@ -40,8 +37,7 @@ namespace SafetyMapWeb.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var city = await _cityService.GetByIdAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -61,16 +57,13 @@ namespace SafetyMapWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var city = new City
+                var dto = new CityCreateDTO
                 {
-                    Id = Guid.NewGuid(),
                     Name = model.Name,
-
                     Population = model.Population
                 };
 
-                _context.Add(city);
-                await _context.SaveChangesAsync();
+                await _cityService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -84,7 +77,7 @@ namespace SafetyMapWeb.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _cityService.GetByIdAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -94,7 +87,6 @@ namespace SafetyMapWeb.Controllers
             {
                 Id = city.Id,
                 Name = city.Name,
-
                 Population = city.Population
             };
 
@@ -111,18 +103,14 @@ namespace SafetyMapWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-
-                var city = await _context.Cities.FindAsync(id);
-                if (city == null)
+                var dto = new CityEditDTO
                 {
-                    return NotFound();
-                }
-                city.Name = model.Name;
+                    Id = model.Id,
+                    Name = model.Name,
+                    Population = model.Population
+                };
 
-                city.Population = model.Population;
-
-                _context.Update(city);
-                await _context.SaveChangesAsync();
+                await _cityService.UpdateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -136,8 +124,7 @@ namespace SafetyMapWeb.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var city = await _cityService.GetByIdAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -150,13 +137,7 @@ namespace SafetyMapWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var city = await _context.Cities.FindAsync(id);
-            if (city != null)
-            {
-                _context.Cities.Remove(city);
-            }
-
-            await _context.SaveChangesAsync();
+            await _cityService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

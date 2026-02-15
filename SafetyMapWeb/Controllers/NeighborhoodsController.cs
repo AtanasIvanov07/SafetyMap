@@ -1,35 +1,36 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SafetyMapData;
-using SafetyMapData.Entities;
+using SafetyMap.Core.Contracts;
+using SafetyMap.Core.DTOs.Neighborhood;
 using SafetyMapWeb.Models.Neighborhoods;
 
 namespace SafetyMapWeb.Controllers
 {
     public class NeighborhoodsController : Controller
     {
-        private readonly SafetyMapDbContext _context;
+        private readonly INeighborhoodService _neighborhoodService;
+        private readonly ICityService _cityService;
 
-        public NeighborhoodsController(SafetyMapDbContext context)
+        public NeighborhoodsController(INeighborhoodService neighborhoodService, ICityService cityService)
         {
-            _context = context;
+            _neighborhoodService = neighborhoodService;
+            _cityService = cityService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var neighborhoods = await _context.Neighborhoods
-                .Include(n => n.City)
-                .Select(n => new NeighborhoodIndexViewModel
-                {
-                    Id = n.Id,
-                    Name = n.Name,
-                    SafetyRating = n.SafetyRating,
-                    CityName = n.City != null ? n.City.Name : "N/A"
-                })
-                .ToListAsync();
-            return View(neighborhoods);
+            var neighborhoods = await _neighborhoodService.GetAllAsync();
+
+            var viewModels = neighborhoods.Select(n => new NeighborhoodIndexViewModel
+            {
+                Id = n.Id,
+                Name = n.Name,
+                SafetyRating = n.SafetyRating,
+                CityName = n.CityName
+            }).ToList();
+
+            return View(viewModels);
         }
 
         [HttpGet]
@@ -37,10 +38,7 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var neighborhood = await _context.Neighborhoods
-                .Include(n => n.City)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var neighborhood = await _neighborhoodService.GetByIdAsync(id.Value);
             if (neighborhood == null) return NotFound();
 
             return View(neighborhood);
@@ -50,7 +48,8 @@ namespace SafetyMapWeb.Controllers
         public async Task<IActionResult> Create()
         {
             var model = new NeighborhoodCreateViewModel();
-            model.Cities = _context.Cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
+            var cities = await _cityService.GetAllAsync();
+            model.Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
             return View(model);
         }
 
@@ -59,20 +58,20 @@ namespace SafetyMapWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var neighborhood = new Neighborhood
+                var dto = new NeighborhoodCreateDTO
                 {
-                    Id = Guid.NewGuid(),
                     Name = model.Name,
                     SafetyRating = model.SafetyRating,
                     Latitude = model.Latitude,
                     Longitude = model.Longitude,
                     CityId = model.CityId
                 };
-                _context.Add(neighborhood);
-                await _context.SaveChangesAsync();
+
+                await _neighborhoodService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            model.Cities = _context.Cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
+            var cities = await _cityService.GetAllAsync();
+            model.Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
             return View(model);
         }
 
@@ -81,9 +80,10 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var neighborhood = await _context.Neighborhoods.FindAsync(id);
+            var neighborhood = await _neighborhoodService.GetByIdAsync(id.Value);
             if (neighborhood == null) return NotFound();
 
+            var cities = await _cityService.GetAllAsync();
             var model = new NeighborhoodEditViewModel
             {
                 Id = neighborhood.Id,
@@ -92,7 +92,7 @@ namespace SafetyMapWeb.Controllers
                 Latitude = neighborhood.Latitude,
                 Longitude = neighborhood.Longitude,
                 CityId = neighborhood.CityId,
-                Cities = _context.Cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList()
+                Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList()
             };
             return View(model);
         }
@@ -104,20 +104,21 @@ namespace SafetyMapWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var neighborhood = await _context.Neighborhoods.FindAsync(id);
-                if (neighborhood == null) return NotFound();
+                var dto = new NeighborhoodEditDTO
+                {
+                    Id = model.Id,
+                    Name = model.Name,
+                    SafetyRating = model.SafetyRating,
+                    Latitude = model.Latitude,
+                    Longitude = model.Longitude,
+                    CityId = model.CityId
+                };
 
-                neighborhood.Name = model.Name;
-                neighborhood.SafetyRating = model.SafetyRating;
-                neighborhood.Latitude = model.Latitude;
-                neighborhood.Longitude = model.Longitude;
-                neighborhood.CityId = model.CityId;
-
-                _context.Update(neighborhood);
-                await _context.SaveChangesAsync();
+                await _neighborhoodService.UpdateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            model.Cities = _context.Cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
+            var cities = await _cityService.GetAllAsync();
+            model.Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
             return View(model);
         }
 
@@ -126,9 +127,7 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var neighborhood = await _context.Neighborhoods
-                .Include(n => n.City)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var neighborhood = await _neighborhoodService.GetByIdAsync(id.Value);
             if (neighborhood == null) return NotFound();
 
             return View(neighborhood);
@@ -137,12 +136,7 @@ namespace SafetyMapWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var neighborhood = await _context.Neighborhoods.FindAsync(id);
-            if (neighborhood != null)
-            {
-                _context.Neighborhoods.Remove(neighborhood);
-                await _context.SaveChangesAsync();
-            }
+            await _neighborhoodService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

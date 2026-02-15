@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SafetyMapData\SafetyMapData.csproj" />
+    <ProjectReference Include="..\SafetyMap.Core\SafetyMap.Core.csproj" />
   </ItemGroup>
 
 </Project>

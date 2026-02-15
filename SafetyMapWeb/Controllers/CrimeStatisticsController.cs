@@ -1,38 +1,36 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SafetyMapData;
-using SafetyMapData.Entities;
+using SafetyMap.Core.Contracts;
+using SafetyMap.Core.DTOs.CrimeStatistic;
 using SafetyMapWeb.Models.CrimeStatistics;
 
 namespace SafetyMapWeb.Controllers
 {
     public class CrimeStatisticsController : Controller
     {
-        private readonly SafetyMapDbContext _context;
+        private readonly ICrimeStatisticService _crimeStatisticService;
 
-        public CrimeStatisticsController(SafetyMapDbContext context)
+        public CrimeStatisticsController(ICrimeStatisticService crimeStatisticService)
         {
-            _context = context;
+            _crimeStatisticService = crimeStatisticService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var crimeStatistics = await _context.CrimeStatistics
-                .Include(c => c.Neighborhood)
-                .Include(c => c.CrimeCategory)
-                .Select(c => new CrimeStatisticIndexViewModel
-                {
-                    Id = c.Id,
-                    NeighborhoodName = c.Neighborhood != null ? c.Neighborhood.Name : "N/A",
-                    CrimeCategoryName = c.CrimeCategory != null ? c.CrimeCategory.Name : "N/A",
-                    CountOfCrimes = c.CountOfCrimes,
-                    Year = c.Year,
-                    TrendPercentage = c.TrendPercentage
-                })
-                .ToListAsync();
-            return View(crimeStatistics);
+            var crimeStatistics = await _crimeStatisticService.GetAllAsync();
+
+            var viewModels = crimeStatistics.Select(c => new CrimeStatisticIndexViewModel
+            {
+                Id = c.Id,
+                NeighborhoodName = c.NeighborhoodName,
+                CrimeCategoryName = c.CrimeCategoryName,
+                CountOfCrimes = c.CountOfCrimes,
+                Year = c.Year,
+                TrendPercentage = c.TrendPercentage
+            }).ToList();
+
+            return View(viewModels);
         }
 
         [HttpGet]
@@ -40,11 +38,7 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var crimeStatistic = await _context.CrimeStatistics
-                .Include(c => c.Neighborhood)
-                .Include(c => c.CrimeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var crimeStatistic = await _crimeStatisticService.GetByIdAsync(id.Value);
             if (crimeStatistic == null) return NotFound();
 
             return View(crimeStatistic);
@@ -54,8 +48,10 @@ namespace SafetyMapWeb.Controllers
         public async Task<IActionResult> Create()
         {
             var model = new CrimeStatisticCreateViewModel();
-            model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
-            model.CrimeCategories = _context.CrimeCategories.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
+            var neighborhoods = await _crimeStatisticService.GetNeighborhoodSelectListAsync();
+            var categories = await _crimeStatisticService.GetCrimeCategorySelectListAsync();
+            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+            model.CrimeCategories = categories.Select(c => new SelectListItem { Value = c.Key, Text = c.Value }).ToList();
             return View(model);
         }
 
@@ -64,21 +60,22 @@ namespace SafetyMapWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var crimeStatistic = new CrimeStatistic
+                var dto = new CrimeStatisticCreateDTO
                 {
-                    Id = Guid.NewGuid(),
                     NeighborhoodId = model.NeighborhoodId,
                     CrimeCategoryId = model.CrimeCategoryId,
                     CountOfCrimes = model.CountOfCrimes,
                     Year = model.Year,
                     TrendPercentage = model.TrendPercentage
                 };
-                _context.Add(crimeStatistic);
-                await _context.SaveChangesAsync();
+
+                await _crimeStatisticService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
-            model.CrimeCategories = _context.CrimeCategories.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
+            var neighborhoods = await _crimeStatisticService.GetNeighborhoodSelectListAsync();
+            var categories = await _crimeStatisticService.GetCrimeCategorySelectListAsync();
+            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+            model.CrimeCategories = categories.Select(c => new SelectListItem { Value = c.Key, Text = c.Value }).ToList();
             return View(model);
         }
 
@@ -87,8 +84,11 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var crimeStatistic = await _context.CrimeStatistics.FindAsync(id);
+            var crimeStatistic = await _crimeStatisticService.GetByIdAsync(id.Value);
             if (crimeStatistic == null) return NotFound();
+
+            var neighborhoods = await _crimeStatisticService.GetNeighborhoodSelectListAsync();
+            var categories = await _crimeStatisticService.GetCrimeCategorySelectListAsync();
 
             var model = new CrimeStatisticEditViewModel
             {
@@ -98,8 +98,8 @@ namespace SafetyMapWeb.Controllers
                 CountOfCrimes = crimeStatistic.CountOfCrimes,
                 Year = crimeStatistic.Year,
                 TrendPercentage = crimeStatistic.TrendPercentage,
-                Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList(),
-                CrimeCategories = _context.CrimeCategories.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList()
+                Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList(),
+                CrimeCategories = categories.Select(c => new SelectListItem { Value = c.Key, Text = c.Value }).ToList()
             };
             return View(model);
         }
@@ -111,21 +111,23 @@ namespace SafetyMapWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var crimeStatistic = await _context.CrimeStatistics.FindAsync(id);
-                if (crimeStatistic == null) return NotFound();
+                var dto = new CrimeStatisticEditDTO
+                {
+                    Id = model.Id,
+                    NeighborhoodId = model.NeighborhoodId,
+                    CrimeCategoryId = model.CrimeCategoryId,
+                    CountOfCrimes = model.CountOfCrimes,
+                    Year = model.Year,
+                    TrendPercentage = model.TrendPercentage
+                };
 
-                crimeStatistic.NeighborhoodId = model.NeighborhoodId;
-                crimeStatistic.CrimeCategoryId = model.CrimeCategoryId;
-                crimeStatistic.CountOfCrimes = model.CountOfCrimes;
-                crimeStatistic.Year = model.Year;
-                crimeStatistic.TrendPercentage = model.TrendPercentage;
-
-                _context.Update(crimeStatistic);
-                await _context.SaveChangesAsync();
+                await _crimeStatisticService.UpdateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
-            model.CrimeCategories = _context.CrimeCategories.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
+            var neighborhoods = await _crimeStatisticService.GetNeighborhoodSelectListAsync();
+            var categories = await _crimeStatisticService.GetCrimeCategorySelectListAsync();
+            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+            model.CrimeCategories = categories.Select(c => new SelectListItem { Value = c.Key, Text = c.Value }).ToList();
             return View(model);
         }
 
@@ -134,10 +136,7 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var crimeStatistic = await _context.CrimeStatistics
-                .Include(c => c.Neighborhood)
-                .Include(c => c.CrimeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var crimeStatistic = await _crimeStatisticService.GetByIdAsync(id.Value);
             if (crimeStatistic == null) return NotFound();
 
             return View(crimeStatistic);
@@ -146,12 +145,7 @@ namespace SafetyMapWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var crimeStatistic = await _context.CrimeStatistics.FindAsync(id);
-            if (crimeStatistic != null)
-            {
-                _context.CrimeStatistics.Remove(crimeStatistic);
-                await _context.SaveChangesAsync();
-            }
+            await _crimeStatisticService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

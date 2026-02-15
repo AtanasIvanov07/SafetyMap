@@ -302,3 +302,5 @@ C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapWeb\obj\Debug\net8.0\refi
 C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapWeb\obj\Debug\net8.0\SafetyMapWeb.pdb
 C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapWeb\obj\Debug\net8.0\SafetyMapWeb.genruntimeconfig.cache
 C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapWeb\obj\Debug\net8.0\ref\SafetyMapWeb.dll
+c:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\bin\Debug\net8.0\SafetyMap.Core.dll
+c:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\bin\Debug\net8.0\SafetyMap.Core.pdb

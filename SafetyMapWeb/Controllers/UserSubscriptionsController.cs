@@ -1,44 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SafetyMapData;
-using SafetyMapData.Entities;
+using SafetyMap.Core.Contracts;
+using SafetyMap.Core.DTOs.UserSubscription;
 using SafetyMapWeb.Models.UserSubscriptions;
 
 namespace SafetyMapWeb.Controllers
 {
     public class UserSubscriptionsController : Controller
     {
-        private readonly SafetyMapDbContext _context;
+        private readonly IUserSubscriptionService _userSubscriptionService;
 
-        public UserSubscriptionsController(SafetyMapDbContext context)
+        public UserSubscriptionsController(IUserSubscriptionService userSubscriptionService)
         {
-            _context = context;
+            _userSubscriptionService = userSubscriptionService;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var subscriptions = await _context.UserSubscriptions
-                .Include(u => u.Neighborhood)
-                .Select(u => new UserSubscriptionIndexViewModel
-                {
-                    Id = u.Id,
-                    UserId = u.UserId,
-                    NeighborhoodName = u.Neighborhood != null ? u.Neighborhood.Name : "N/A",
-                    SubscribedAt = u.SubscribedAt
-                })
-                .ToListAsync();
-            return View(subscriptions);
+            var subscriptions = await _userSubscriptionService.GetAllAsync();
+
+            var viewModels = subscriptions.Select(u => new UserSubscriptionIndexViewModel
+            {
+                Id = u.Id,
+                UserId = u.UserId,
+                NeighborhoodName = u.NeighborhoodName,
+                SubscribedAt = u.SubscribedAt
+            }).ToList();
+
+            return View(viewModels);
         }
+
         [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();
 
-            var subscription = await _context.UserSubscriptions
-                .Include(u => u.Neighborhood)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var subscription = await _userSubscriptionService.GetByIdAsync(id.Value);
             if (subscription == null) return NotFound();
 
             return View(subscription);
@@ -48,7 +46,8 @@ namespace SafetyMapWeb.Controllers
         public async Task<IActionResult> Create()
         {
             var model = new UserSubscriptionCreateViewModel();
-            model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
+            var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
+            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
             return View(model);
         }
 
@@ -57,18 +56,17 @@ namespace SafetyMapWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var subscription = new UserSubscription
+                var dto = new UserSubscriptionCreateDTO
                 {
-                    Id = Guid.NewGuid(),
                     UserId = model.UserId,
-                    NeighborhoodId = model.NeighborhoodId,
-                    SubscribedAt = DateTime.Now
+                    NeighborhoodId = model.NeighborhoodId
                 };
-                _context.Add(subscription);
-                await _context.SaveChangesAsync();
+
+                await _userSubscriptionService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
+            var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
+            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
             return View(model);
         }
 
@@ -77,16 +75,17 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var subscription = await _context.UserSubscriptions.FindAsync(id);
+            var subscription = await _userSubscriptionService.GetByIdAsync(id.Value);
             if (subscription == null) return NotFound();
 
+            var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
             var model = new UserSubscriptionEditViewModel
             {
                 Id = subscription.Id,
                 UserId = subscription.UserId,
                 NeighborhoodId = subscription.NeighborhoodId,
                 SubscribedAt = subscription.SubscribedAt,
-                Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList()
+                Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList()
             };
             return View(model);
         }
@@ -98,18 +97,19 @@ namespace SafetyMapWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var subscription = await _context.UserSubscriptions.FindAsync(id);
-                if (subscription == null) return NotFound();
+                var dto = new UserSubscriptionEditDTO
+                {
+                    Id = model.Id,
+                    UserId = model.UserId,
+                    NeighborhoodId = model.NeighborhoodId,
+                    SubscribedAt = model.SubscribedAt
+                };
 
-                subscription.UserId = model.UserId;
-                subscription.NeighborhoodId = model.NeighborhoodId;
-                subscription.SubscribedAt = model.SubscribedAt;
-
-                _context.Update(subscription);
-                await _context.SaveChangesAsync();
+                await _userSubscriptionService.UpdateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            model.Neighborhoods = _context.Neighborhoods.Select(n => new SelectListItem { Value = n.Id.ToString(), Text = n.Name }).ToList();
+            var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
+            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
             return View(model);
         }
 
@@ -118,9 +118,7 @@ namespace SafetyMapWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var subscription = await _context.UserSubscriptions
-                .Include(u => u.Neighborhood)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var subscription = await _userSubscriptionService.GetByIdAsync(id.Value);
             if (subscription == null) return NotFound();
 
             return View(subscription);
@@ -129,12 +127,7 @@ namespace SafetyMapWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var subscription = await _context.UserSubscriptions.FindAsync(id);
-            if (subscription != null)
-            {
-                _context.UserSubscriptions.Remove(subscription);
-                await _context.SaveChangesAsync();
-            }
+            await _userSubscriptionService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }
