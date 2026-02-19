@@ -71,6 +71,7 @@ using (var scope = app.Services.CreateScope())
     {
         await DataSeeder.SeedRolesAsync(services);
         await DataSeeder.SeedCitiesAsync(services);
+        await DataSeeder.SeedAdminAsync(services);
     }
     catch (Exception ex)
     {

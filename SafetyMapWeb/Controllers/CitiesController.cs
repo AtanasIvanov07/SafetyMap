@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs.City;
 using SafetyMapWeb.Models.Cities;
@@ -15,6 +16,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Index()
         {
             var cities = await _cityService.GetAllAsync();
@@ -30,6 +32,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -47,12 +50,14 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CityCreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -70,6 +75,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -95,6 +101,7 @@ namespace SafetyMapWeb.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid id, CityEditViewModel model)
         {
             if (id != model.Id)
@@ -117,6 +124,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -135,6 +143,7 @@ namespace SafetyMapWeb.Controllers
 
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _cityService.DeleteAsync(id);

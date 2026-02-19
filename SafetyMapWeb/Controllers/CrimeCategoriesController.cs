@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs.CrimeCategory;
 using SafetyMapWeb.Models.CrimeCategories;
@@ -15,6 +16,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Index()
         {
             var categories = await _crimeCategoryService.GetAllAsync();
@@ -30,6 +32,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -47,12 +50,14 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CrimeCategoryCreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -70,6 +75,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -94,6 +100,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid id, CrimeCategoryEditViewModel model)
         {
             if (id != model.Id)
@@ -117,6 +124,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -135,6 +143,7 @@ namespace SafetyMapWeb.Controllers
 
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _crimeCategoryService.DeleteAsync(id);

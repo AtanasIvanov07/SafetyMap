@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs.Neighborhood;
@@ -18,6 +19,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Index()
         {
             var neighborhoods = await _neighborhoodService.GetAllAsync();
@@ -34,6 +36,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();
@@ -45,6 +48,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             var model = new NeighborhoodCreateViewModel();
@@ -54,6 +58,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(NeighborhoodCreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -76,6 +81,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null) return NotFound();
@@ -98,6 +104,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(Guid id, NeighborhoodEditViewModel model)
         {
             if (id != model.Id) return NotFound();
@@ -123,6 +130,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null) return NotFound();
@@ -134,6 +142,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _neighborhoodService.DeleteAsync(id);

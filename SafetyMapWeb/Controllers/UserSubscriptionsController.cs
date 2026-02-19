@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs.UserSubscription;
@@ -6,6 +7,7 @@ using SafetyMapWeb.Models.UserSubscriptions;
 
 namespace SafetyMapWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserSubscriptionsController : Controller
     {
         private readonly IUserSubscriptionService _userSubscriptionService;

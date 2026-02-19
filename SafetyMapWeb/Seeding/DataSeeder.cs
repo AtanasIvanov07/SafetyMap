@@ -67,6 +67,31 @@ namespace SafetyMapWeb.Seeding
             await context.Cities.AddRangeAsync(cities);
             await context.SaveChangesAsync();
         }
+
+        public static async Task SeedAdminAsync(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<UserIdentity>>();
+
+            var adminUser = await userManager.FindByEmailAsync("admin@safetymap.com");
+            if (adminUser == null)
+            {
+                var user = new UserIdentity
+                {
+                    UserName = "admin@safetymap.com",
+                    Email = "admin@safetymap.com",
+                    FirstName = "System",
+                    LastName = "Admin",
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(user, "Admin123!");
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, "Admin");
+                }
+            }
+        }
     }
 
 

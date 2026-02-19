@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using SafetyMap.Core.Contracts;
 using SafetyMapWeb.Models.ViewModels;
 
@@ -13,12 +14,14 @@ namespace SafetyMapWeb.Controllers
             _mapService = mapService;
         }
 
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetPopulationData()
         {
             var cities = await _mapService.GetPopulationDataAsync();
