@@ -93,3 +93,12 @@ $RECYCLE.BIN/
 
 # VS Code directories
 .history/
+
+# Local Development Settings
+appsettings.Development.json
+
+# Node modules (if you add npm packages later)
+node_modules/
+
+# Log files
+*.log
