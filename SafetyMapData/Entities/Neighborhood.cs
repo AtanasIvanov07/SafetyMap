@@ -14,8 +14,6 @@ namespace SafetyMapData.Entities
 
         public int SafetyRating { get; set; }
 
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
 
 
         public Guid CityId { get; set; }

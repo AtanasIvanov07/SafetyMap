@@ -67,8 +67,6 @@ namespace SafetyMapWeb.Controllers
                 {
                     Name = model.Name,
                     SafetyRating = model.SafetyRating,
-                    Latitude = model.Latitude,
-                    Longitude = model.Longitude,
                     CityId = model.CityId
                 };
 
@@ -95,8 +93,6 @@ namespace SafetyMapWeb.Controllers
                 Id = neighborhood.Id,
                 Name = neighborhood.Name,
                 SafetyRating = neighborhood.SafetyRating,
-                Latitude = neighborhood.Latitude,
-                Longitude = neighborhood.Longitude,
                 CityId = neighborhood.CityId,
                 Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList()
             };
@@ -116,8 +112,6 @@ namespace SafetyMapWeb.Controllers
                     Id = model.Id,
                     Name = model.Name,
                     SafetyRating = model.SafetyRating,
-                    Latitude = model.Latitude,
-                    Longitude = model.Longitude,
                     CityId = model.CityId
                 };
 

@@ -12,9 +12,6 @@ namespace SafetyMapWeb.Models.Neighborhoods
         [Range(1, 10)]
         public int SafetyRating { get; set; }
 
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-
         [Required]
         public Guid CityId { get; set; }
 

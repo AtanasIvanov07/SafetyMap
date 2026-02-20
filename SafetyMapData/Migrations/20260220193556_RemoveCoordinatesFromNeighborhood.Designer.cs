@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SafetyMapData;
 
@@ -11,9 +12,11 @@ using SafetyMapData;
 namespace SafetyMapData.Migrations
 {
     [DbContext(typeof(SafetyMapDbContext))]
-    partial class SafetyMapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260220193556_RemoveCoordinatesFromNeighborhood")]
+    partial class RemoveCoordinatesFromNeighborhood
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

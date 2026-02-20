@@ -69,9 +69,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        await DataSeeder.SeedRolesAsync(services);
-        await DataSeeder.SeedCitiesAsync(services);
-        await DataSeeder.SeedAdminAsync(services);
+        await DbInitializer.InitializeAsync(services);
     }
     catch (Exception ex)
     {

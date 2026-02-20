@@ -1,29 +1,16 @@
-using Microsoft.AspNetCore.Identity;
-using SafetyMapData.Entities;
-using SafetyMapData;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-namespace SafetyMapWeb.Seeding
+using SafetyMapData;
+using SafetyMapData.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace SafetyMapWeb.Seeding.Seeders
 {
-    public static class DataSeeder
+    public static class CitySeeder
     {
-        public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
-        {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-            string[] roleNames = { "Admin", "User" };
-
-            foreach (var roleName in roleNames)
-            {
-                var roleExist = await roleManager.RoleExistsAsync(roleName);
-                if (!roleExist)
-                {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
-                    Console.WriteLine($"Seeded role: {roleName}");
-                }
-            }
-        }
-
-        public static async Task SeedCitiesAsync(IServiceProvider serviceProvider)
+        public static async Task SeedAsync(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<SafetyMapDbContext>();
@@ -35,9 +22,9 @@ namespace SafetyMapWeb.Seeding
 
             var cities = new List<City>
             {
-               new City { Id = Guid.NewGuid(), Name = "Sofia", Population = 1241675 },
-               new City { Id = Guid.NewGuid(), Name = "Plovdiv", Population = 346893 },
-               new City { Id = Guid.NewGuid(), Name = "Varna", Population = 336505 },
+               new City { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Name = "Sofia", Population = 1241675 },
+               new City { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Name = "Plovdiv", Population = 346893 },
+               new City { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Name = "Varna", Population = 336505 },
                new City { Id = Guid.NewGuid(), Name = "Burgas", Population = 202434 },
                new City { Id = Guid.NewGuid(), Name = "Ruse", Population = 142902 },
                new City { Id = Guid.NewGuid(), Name = "Stara Zagora", Population = 136307 },
@@ -66,34 +53,7 @@ namespace SafetyMapWeb.Seeding
 
             await context.Cities.AddRangeAsync(cities);
             await context.SaveChangesAsync();
-        }
-
-        public static async Task SeedAdminAsync(IServiceProvider serviceProvider)
-        {
-            var userManager = serviceProvider.GetRequiredService<UserManager<UserIdentity>>();
-
-            var adminUser = await userManager.FindByEmailAsync("admin@safetymap.com");
-            if (adminUser == null)
-            {
-                var user = new UserIdentity
-                {
-                    UserName = "admin@safetymap.com",
-                    Email = "admin@safetymap.com",
-                    FirstName = "System",
-                    LastName = "Admin",
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(user, "Admin123!");
-
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(user, "Admin");
-                }
-            }
+            Console.WriteLine("Seeded Cities.");
         }
     }
-
-
 }
-

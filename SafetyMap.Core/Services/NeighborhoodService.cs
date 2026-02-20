@@ -24,8 +24,6 @@ namespace SafetyMap.Core.Services
                     Id = n.Id,
                     Name = n.Name,
                     SafetyRating = n.SafetyRating,
-                    Latitude = n.Latitude,
-                    Longitude = n.Longitude,
                     CityId = n.CityId,
                     CityName = n.City != null ? n.City.Name : "N/A"
                 })
@@ -42,8 +40,6 @@ namespace SafetyMap.Core.Services
                     Id = n.Id,
                     Name = n.Name,
                     SafetyRating = n.SafetyRating,
-                    Latitude = n.Latitude,
-                    Longitude = n.Longitude,
                     CityId = n.CityId,
                     CityName = n.City != null ? n.City.Name : "N/A"
                 })
@@ -57,8 +53,6 @@ namespace SafetyMap.Core.Services
                 Id = Guid.NewGuid(),
                 Name = dto.Name,
                 SafetyRating = dto.SafetyRating,
-                Latitude = dto.Latitude,
-                Longitude = dto.Longitude,
                 CityId = dto.CityId
             };
 
@@ -77,8 +71,6 @@ namespace SafetyMap.Core.Services
 
             neighborhood.Name = dto.Name;
             neighborhood.SafetyRating = dto.SafetyRating;
-            neighborhood.Latitude = dto.Latitude;
-            neighborhood.Longitude = dto.Longitude;
             neighborhood.CityId = dto.CityId;
 
             await _context.SaveChangesAsync();

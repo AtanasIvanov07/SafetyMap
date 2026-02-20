@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SafetyMapData")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+752822f76e423a92f983e0c4c542a9ea687b3b93")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd4f4c03bd493561fd485d4159223624432b056a")]
 [assembly: System.Reflection.AssemblyProductAttribute("SafetyMapData")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SafetyMapData")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
