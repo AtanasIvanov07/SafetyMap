@@ -1,4 +1,4 @@
-@model SafetyMapData.Entities.CrimeCategory
+@model SafetyMap.Core.DTOs.CrimeCategory.CrimeCategoryDTO
 
 @{
     ViewData["Title"] = "Delete";
@@ -25,7 +25,7 @@
             <div style="width: 20px; height: 20px; background-color: @Model.ColorCode; display: inline-block; margin-left: 10px; border: 1px solid #000;"></div>
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |

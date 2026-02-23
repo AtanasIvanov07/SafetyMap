@@ -46,6 +46,18 @@ namespace SafetyMap.Core.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<bool> ExistsAsync(string name, Guid cityId, Guid? excludeId = null)
+        {
+            var query = _context.Neighborhoods.Where(n => n.Name.ToLower() == name.ToLower() && n.CityId == cityId);
+            
+            if (excludeId.HasValue)
+            {
+                query = query.Where(n => n.Id != excludeId.Value);
+            }
+
+            return await query.AnyAsync();
+        }
+
         public async Task CreateAsync(NeighborhoodCreateDTO dto)
         {
             var neighborhood = new Neighborhood

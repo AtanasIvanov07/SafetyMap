@@ -7,6 +7,7 @@ using SafetyMapWeb.Models.Neighborhoods;
 
 namespace SafetyMapWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class NeighborhoodsController : Controller
     {
         private readonly INeighborhoodService _neighborhoodService;
@@ -63,15 +64,22 @@ namespace SafetyMapWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var dto = new NeighborhoodCreateDTO
+                if (await _neighborhoodService.ExistsAsync(model.Name, model.CityId))
                 {
-                    Name = model.Name,
-                    SafetyRating = model.SafetyRating,
-                    CityId = model.CityId
-                };
+                    ModelState.AddModelError("Name", "A neighborhood with this name already exists in the selected city.");
+                }
+                else
+                {
+                    var dto = new NeighborhoodCreateDTO
+                    {
+                        Name = model.Name,
+                        SafetyRating = model.SafetyRating,
+                        CityId = model.CityId
+                    };
 
-                await _neighborhoodService.CreateAsync(dto);
-                return RedirectToAction(nameof(Index));
+                    await _neighborhoodService.CreateAsync(dto);
+                    return RedirectToAction(nameof(Index));
+                }
             }
             var cities = await _cityService.GetAllAsync();
             model.Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();
@@ -107,16 +115,23 @@ namespace SafetyMapWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var dto = new NeighborhoodEditDTO
+                if (await _neighborhoodService.ExistsAsync(model.Name, model.CityId, model.Id))
                 {
-                    Id = model.Id,
-                    Name = model.Name,
-                    SafetyRating = model.SafetyRating,
-                    CityId = model.CityId
-                };
+                    ModelState.AddModelError("Name", "A neighborhood with this name already exists in the selected city.");
+                }
+                else
+                {
+                    var dto = new NeighborhoodEditDTO
+                    {
+                        Id = model.Id,
+                        Name = model.Name,
+                        SafetyRating = model.SafetyRating,
+                        CityId = model.CityId
+                    };
 
-                await _neighborhoodService.UpdateAsync(dto);
-                return RedirectToAction(nameof(Index));
+                    await _neighborhoodService.UpdateAsync(dto);
+                    return RedirectToAction(nameof(Index));
+                }
             }
             var cities = await _cityService.GetAllAsync();
             model.Cities = cities.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name }).ToList();

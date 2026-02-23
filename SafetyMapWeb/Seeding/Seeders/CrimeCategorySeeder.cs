@@ -15,10 +15,7 @@ namespace SafetyMapWeb.Seeding.Seeders
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<SafetyMapDbContext>();
 
-            if (await context.CrimeCategories.AnyAsync())
-            {
-                return;
-            }
+           
 
             var categories = new List<CrimeCategory>
             {
@@ -31,7 +28,13 @@ namespace SafetyMapWeb.Seeding.Seeders
                new CrimeCategory { Id = Guid.Parse("C7777777-7777-7777-7777-777777777777"), Name = "Drug Offenses", ColorCode = "#4CAF50" }
             };
 
-            await context.CrimeCategories.AddRangeAsync(categories);
+            foreach (var cat in categories)
+            {
+                if (!await context.CrimeCategories.AnyAsync(c => c.Id == cat.Id))
+                {
+                    await context.CrimeCategories.AddAsync(cat);
+                }
+            }
             await context.SaveChangesAsync();
             Console.WriteLine("Seeded Crime Categories.");
         }

@@ -7,6 +7,7 @@ using SafetyMapWeb.Models.CrimeStatistics;
 
 namespace SafetyMapWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CrimeStatisticsController : Controller
     {
         private readonly ICrimeStatisticService _crimeStatisticService;

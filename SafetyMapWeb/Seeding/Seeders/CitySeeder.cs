@@ -15,10 +15,7 @@ namespace SafetyMapWeb.Seeding.Seeders
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<SafetyMapDbContext>();
 
-            if (await context.Cities.AnyAsync())
-            {
-                return;
-            }
+    
 
             var cities = new List<City>
             {
@@ -51,7 +48,13 @@ namespace SafetyMapWeb.Seeding.Seeders
                new City { Id = Guid.NewGuid(), Name = "Yambol", Population = 65421 }
             };
 
-            await context.Cities.AddRangeAsync(cities);
+            foreach (var city in cities)
+            {
+                if (!await context.Cities.AnyAsync(c => c.Id == city.Id))
+                {
+                    await context.Cities.AddAsync(city);
+                }
+            }
             await context.SaveChangesAsync();
             Console.WriteLine("Seeded Cities.");
         }

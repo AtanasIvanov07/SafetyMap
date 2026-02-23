@@ -1,4 +1,4 @@
-@model SafetyMapData.Entities.CrimeStatistic
+@model SafetyMap.Core.DTOs.CrimeStatistic.CrimeStatisticDTO
 
 @{
     ViewData["Title"] = "Details";
@@ -14,13 +14,13 @@
             Neighborhood
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Neighborhood!.Name)
+            @Html.DisplayFor(model => model.NeighborhoodName)
         </dd>
         <dt class="col-sm-2">
             Category
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CrimeCategory!.Name)
+            @Html.DisplayFor(model => model.CrimeCategoryName)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CountOfCrimes)

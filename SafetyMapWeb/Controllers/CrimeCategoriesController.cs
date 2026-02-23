@@ -6,6 +6,7 @@ using SafetyMapWeb.Models.CrimeCategories;
 
 namespace SafetyMapWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CrimeCategoriesController : Controller
     {
         private readonly ICrimeCategoryService _crimeCategoryService;

@@ -1,4 +1,4 @@
-@model SafetyMapData.Entities.CrimeCategory
+@model SafetyMap.Core.DTOs.CrimeCategory.CrimeCategoryDTO
 
 @{
     ViewData["Title"] = "Details";
@@ -10,18 +10,20 @@
     <h4>CrimeCategory</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ColorCode)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ColorCode)
-            <div style="width: 20px; height: 20px; background-color: @Model.ColorCode; display: inline-block; margin-left: 10px; border: 1px solid #000;"></div>
+            <div
+                style="width: 20px; height: 20px; background-color: @Model.ColorCode; display: inline-block; margin-left: 10px; border: 1px solid #000;">
+            </div>
         </dd>
     </dl>
 </div>

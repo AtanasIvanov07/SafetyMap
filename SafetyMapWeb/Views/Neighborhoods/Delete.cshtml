@@ -1,4 +1,4 @@
-@model SafetyMapData.Entities.Neighborhood
+@model SafetyMap.Core.DTOs.Neighborhood.NeighborhoodDTO
 
 @{
     ViewData["Title"] = "Delete";
@@ -25,10 +25,10 @@
         </dd>
 
         <dt class="col-sm-2">
-            City
+            City Name
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.City!.Name)
+            @Html.DisplayFor(model => model.CityName)
         </dd>
     </dl>
 
