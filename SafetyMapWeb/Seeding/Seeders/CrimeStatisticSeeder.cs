@@ -15,10 +15,7 @@ namespace SafetyMapWeb.Seeding.Seeders
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<SafetyMapDbContext>();
 
-            if (await context.CrimeStatistics.AnyAsync())
-            {
-                return;
-            }
+          
 
             var random = new Random(42); // Seed for reproducible generation
             var stats = new List<CrimeStatistic>();
@@ -36,38 +33,40 @@ namespace SafetyMapWeb.Seeding.Seeders
                 Guid.Parse("C7777777-7777-7777-7777-777777777777")  // Drug (Mid-High)
             };
 
-            var neighborhoodGuids = new[]
+            if (await context.CrimeStatistics.AnyAsync())
             {
-                // Sofia
-                Guid.Parse("A1111111-1111-1111-1111-111111111111"),
-                Guid.Parse("A1111112-1111-1111-1111-111111111111"),
-                Guid.Parse("A1111113-1111-1111-1111-111111111111"),
-                Guid.Parse("A1111114-1111-1111-1111-111111111111"),
-                // Plovdiv
-                Guid.Parse("A2222221-2222-2222-2222-222222222222"),
-                Guid.Parse("A2222222-2222-2222-2222-222222222222"),
-                Guid.Parse("A2222223-2222-2222-2222-222222222222"),
-                Guid.Parse("A2222224-2222-2222-2222-222222222222"),
-                // Varna
-                Guid.Parse("A3333331-3333-3333-3333-333333333333"),
-                Guid.Parse("A3333332-3333-3333-3333-333333333333"),
-                Guid.Parse("A3333333-3333-3333-3333-333333333333"),
-                Guid.Parse("A3333334-3333-3333-3333-333333333333")
-            };
+                var allStats = await context.CrimeStatistics.ToListAsync();
+                context.CrimeStatistics.RemoveRange(allStats);
+                await context.SaveChangesAsync();
+            }
 
-            foreach (var nId in neighborhoodGuids)
+        
+            var neighborhoods = await context.Neighborhoods.Include(n => n.City).ToListAsync();
+            
+      
+            var neighborhoodCounts = neighborhoods.GroupBy(n => n.CityId).ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (var n in neighborhoods)
             {
+               
+                var populationScale = Math.Max(0.1, n.City.Population / 50000.0);
+                var neighborhoodsInCity = neighborhoodCounts[n.CityId];
+                
+   
+                var finalScale = populationScale / neighborhoodsInCity;
+
                 foreach (var cId in categories)
                 {
                     int lastYearCount = 0;
                     foreach (var year in years)
                     {
                         int baseCount = GetBaseRate(cId, random);
+                        int scaledBaseCount = (int)(baseCount * finalScale);
+        
+                        int noise = (int)(scaledBaseCount * (random.NextDouble() * 0.3 - 0.15));
+                        int currentCount = Math.Max(0, scaledBaseCount + noise);
 
-
-                        int currentCount = Math.Max(0, baseCount + random.Next(-10, 15));
                         double trend = 0;
-
                         if (year == 2023 && lastYearCount > 0)
                         {
                             trend = Math.Round(((double)(currentCount - lastYearCount) / lastYearCount) * 100, 2);
@@ -76,7 +75,7 @@ namespace SafetyMapWeb.Seeding.Seeders
                         stats.Add(new CrimeStatistic
                         {
                             Id = Guid.NewGuid(),
-                            NeighborhoodId = nId,
+                            NeighborhoodId = n.Id,
                             CrimeCategoryId = cId,
                             Year = year,
                             CountOfCrimes = currentCount,

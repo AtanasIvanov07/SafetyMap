@@ -15,7 +15,7 @@ namespace SafetyMapWeb.Seeding.Seeders
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<SafetyMapDbContext>();
 
-            // We removed the early exit so it always seeds missing defaults
+
 
             var sofiaId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             var plovdivId = Guid.Parse("22222222-2222-2222-2222-222222222222");
@@ -49,6 +49,25 @@ namespace SafetyMapWeb.Seeding.Seeders
                     await context.Neighborhoods.AddAsync(neighborhood);
                 }
             }
+
+            //seed at least one neighborhood for cities that don't have any
+            var allCities = await context.Cities.ToListAsync();
+            var random = new Random(101);
+            foreach (var city in allCities)
+            {
+                if (!await context.Neighborhoods.AnyAsync(n => n.CityId == city.Id))
+                {
+                    var newNeighborhood = new Neighborhood
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Centar " + city.Name,
+                        SafetyRating = random.Next(1, 10),
+                        CityId = city.Id
+                    };
+                    await context.Neighborhoods.AddAsync(newNeighborhood);
+                }
+            }
+
             await context.SaveChangesAsync();
             Console.WriteLine("Seeded Neighborhoods.");
         }
