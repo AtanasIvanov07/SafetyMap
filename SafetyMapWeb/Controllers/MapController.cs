@@ -37,9 +37,9 @@ namespace SafetyMapWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> GetCrimeData(Guid? categoryId)
+        public async Task<IActionResult> GetCrimeData(Guid? categoryId, int? year = null)
         {
-            var data = await _mapService.GetCrimeDataAsync(categoryId);
+            var data = await _mapService.GetCrimeDataAsync(categoryId, year);
             return Json(data);
         }
 

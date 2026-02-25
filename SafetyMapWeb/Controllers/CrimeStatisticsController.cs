@@ -19,11 +19,12 @@ namespace SafetyMapWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] string? searchTerm, [FromQuery] int? year, [FromQuery] int currentPage = 1)
         {
-            var crimeStatistics = await _crimeStatisticService.GetAllAsync();
+            int itemsPerPage = 20;
+            var (statistics, totalCount) = await _crimeStatisticService.GetAllAsync(searchTerm, year, currentPage, itemsPerPage);
 
-            var viewModels = crimeStatistics.Select(c => new CrimeStatisticIndexViewModel
+            var viewModels = statistics.Select(c => new CrimeStatisticIndexViewModel
             {
                 Id = c.Id,
                 NeighborhoodName = c.NeighborhoodName,
@@ -33,7 +34,16 @@ namespace SafetyMapWeb.Controllers
                 TrendPercentage = c.TrendPercentage
             }).ToList();
 
-            return View(viewModels);
+            var queryModel = new CrimeStatisticQueryViewModel
+            {
+                SearchTerm = searchTerm,
+                Year = year,
+                CurrentPage = currentPage,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)itemsPerPage),
+                Statistics = viewModels
+            };
+
+            return View(queryModel);
         }
 
         [HttpGet]

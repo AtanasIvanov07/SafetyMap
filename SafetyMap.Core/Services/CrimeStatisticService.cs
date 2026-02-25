@@ -15,11 +15,32 @@ namespace SafetyMap.Core.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<CrimeStatisticDTO>> GetAllAsync()
+        public async Task<(IEnumerable<CrimeStatisticDTO> Statistics, int TotalCount)> GetAllAsync(string? searchTerm = null, int? year = null, int currentPage = 1, int itemsPerPage = 20)
         {
-            return await _context.CrimeStatistics
+            var query = _context.CrimeStatistics
                 .Include(c => c.Neighborhood)
                 .Include(c => c.CrimeCategory)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var lowerSearchTerm = searchTerm.ToLower();
+                query = query.Where(c => (c.Neighborhood != null && c.Neighborhood.Name.ToLower().Contains(lowerSearchTerm)) ||
+                                         (c.CrimeCategory != null && c.CrimeCategory.Name.ToLower().Contains(lowerSearchTerm)));
+            }
+
+            if (year.HasValue)
+            {
+                query = query.Where(c => c.Year == year.Value);
+            }
+
+            int totalCount = await query.CountAsync();
+
+            var statistics = await query
+                .OrderByDescending(c => c.Year)
+                .ThenBy(c => c.Neighborhood.Name)
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
                 .Select(c => new CrimeStatisticDTO
                 {
                     Id = c.Id,
@@ -32,6 +53,8 @@ namespace SafetyMap.Core.Services
                     TrendPercentage = c.TrendPercentage
                 })
                 .ToListAsync();
+
+            return (statistics, totalCount);
         }
 
         public async Task<CrimeStatisticDTO?> GetByIdAsync(Guid id)

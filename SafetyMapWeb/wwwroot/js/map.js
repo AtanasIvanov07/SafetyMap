@@ -88,7 +88,18 @@ Promise.all([
 
 function loadCrimeData(categoryId) {
     let url = '/Map/GetCrimeData';
-    if (categoryId) url += '?categoryId=' + categoryId;
+    let params = [];
+    if (categoryId) params.push('categoryId=' + categoryId);
+
+    let yearEnabled = document.getElementById('enableYearFilter').checked;
+    if (yearEnabled) {
+        let year = document.getElementById('yearSlider').value;
+        params.push('year=' + year);
+    }
+
+    if (params.length > 0) {
+        url += '?' + params.join('&');
+    }
 
     fetch(url)
         .then(response => response.json())
@@ -335,6 +346,34 @@ document.getElementById('viewCrime').addEventListener('change', function (e) {
 
 document.getElementById('crimeCategorySelect').addEventListener('change', function (e) {
     loadCrimeData(this.value);
+});
+
+document.getElementById('enableYearFilter').addEventListener('change', function (e) {
+    var sliderContainer = document.getElementById('yearSliderContainer');
+    sliderContainer.style.display = this.checked ? 'block' : 'none';
+
+    // Update map title based on state
+    if (currentView === 'crime') {
+        let title = this.checked ? `Bulgaria Crime Statistics (${document.getElementById('yearSlider').value})` : 'Bulgaria Crime Statistics (All Time)';
+        document.getElementById('mapTitle').innerText = title;
+
+        var categoryId = document.getElementById('crimeCategorySelect').value;
+        loadCrimeData(categoryId);
+    }
+});
+
+document.getElementById('yearSlider').addEventListener('input', function (e) {
+    document.getElementById('yearLabel').innerText = 'Year: ' + this.value;
+    if (currentView === 'crime' && document.getElementById('enableYearFilter').checked) {
+        document.getElementById('mapTitle').innerText = `Bulgaria Crime Statistics (${this.value})`;
+    }
+});
+
+document.getElementById('yearSlider').addEventListener('change', function (e) {
+    if (currentView === 'crime' && document.getElementById('enableYearFilter').checked) {
+        var categoryId = document.getElementById('crimeCategorySelect').value;
+        loadCrimeData(categoryId);
+    }
 });
 
 document.querySelectorAll('input[name="mapMode"]').forEach(radio => {

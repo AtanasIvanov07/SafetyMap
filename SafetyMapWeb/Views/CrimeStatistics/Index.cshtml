@@ -1,4 +1,4 @@
-@model IEnumerable<SafetyMapWeb.Models.CrimeStatistics.CrimeStatisticIndexViewModel>
+@model SafetyMapWeb.Models.CrimeStatistics.CrimeStatisticQueryViewModel
 
 @{
     ViewData["Title"] = "Crime Statistics";
@@ -9,52 +9,116 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
+
+<form method="get" class="mb-4">
+    <div class="row g-2 align-items-center">
+        <div class="col-auto">
+            <input type="text" name="searchTerm" class="form-control" placeholder="Search neighborhood or category..."
+                value="@Model.SearchTerm" />
+        </div>
+        <div class="col-auto">
+            <input type="number" name="year" class="form-control" placeholder="Year (e.g., 2023)" value="@Model.Year" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Search</button>
+            <a asp-action="Index" class="btn btn-link">Clear</a>
+        </div>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.NeighborhoodName)
+                Neighborhood
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CrimeCategoryName)
+                Category
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CountOfCrimes)
+                Crimes
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Year)
+                Year
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TrendPercentage)
+                Trend
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Statistics)
         {
-                <tr>
-                    <td>
+            <tr>
+                <td>
                     @Html.DisplayFor(modelItem => item.NeighborhoodName)
-                    </td>
-                    <td>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.CrimeCategoryName)
-                    </td>
-                    <td>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.CountOfCrimes)
-                    </td>
-                    <td>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Year)
-                    </td>
-                     <td>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.TrendPercentage)%
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    var startPage = Math.Max(1, Model.CurrentPage - 2);
+    var endPage = Math.Min(Model.TotalPages, startPage + 4);
+
+    if (endPage - startPage < 4)
+    {
+        startPage = Math.Max(1, endPage - 4);
+    }
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="1" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+            
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@(Model.CurrentPage > 1 ? Model.CurrentPage - 1 : 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@i">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@(Model.CurrentPage < Model.TotalPages ? Model.CurrentPage + 1 : Model.TotalPages)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@Model.TotalPages" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

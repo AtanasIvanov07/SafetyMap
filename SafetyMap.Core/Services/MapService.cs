@@ -27,7 +27,7 @@ namespace SafetyMap.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<CityCrimeDto>> GetCrimeDataAsync(Guid? categoryId)
+        public async Task<IEnumerable<CityCrimeDto>> GetCrimeDataAsync(Guid? categoryId, int? year = null)
         {
             var cities = await _context.Cities
                 .Include(c => c.Neighborhoods)
@@ -41,7 +41,8 @@ namespace SafetyMap.Core.Services
             {
                 var cityStats = city.Neighborhoods
                     .SelectMany(n => n.CrimeStatistics)
-                    .Where(cs => !categoryId.HasValue || cs.CrimeCategoryId == categoryId.Value)
+                    .Where(cs => (!categoryId.HasValue || cs.CrimeCategoryId == categoryId.Value) &&
+                                 (!year.HasValue || cs.Year == year.Value))
                     .ToList();
 
                 var dto = new CityCrimeDto

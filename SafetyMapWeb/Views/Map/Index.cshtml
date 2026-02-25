@@ -128,9 +128,24 @@
 
                     <div id="crimeFilterContainer" class="mt-2" style="display: none;">
                         <label for="crimeCategorySelect">Crime Category:</label>
-                        <select id="crimeCategorySelect" class="form-select form-select-sm">
+                        <select id="crimeCategorySelect" class="form-select form-select-sm mb-2">
                             <option value="">All Categories</option>
                         </select>
+
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" id="enableYearFilter">
+                            <label class="form-check-label" for="enableYearFilter">Filter by Year</label>
+                        </div>
+                        <div id="yearSliderContainer" style="display: none;">
+                            <label for="yearSlider" class="form-label mb-0" id="yearLabel">Year: 2023</label>
+                            <input type="range" class="form-range" min="2021" max="2024" step="1" id="yearSlider" value="2023">
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+                                <span>2021</span>
+                                <span>2022</span>
+                                <span>2023</span>
+                                <span>2024</span>
+                            </div>
+                        </div>
                     </div>
 
                     <hr />
