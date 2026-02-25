@@ -374,10 +374,12 @@ window.toggleCompareCity = toggleCompareCity;
 
 function generateCityCardHTML(cityName) {
     var pop = getPopulation(cityName);
+    var crimeRate = getCrimeRate(cityName).toFixed(1);
     var crimeInfo = "";
     var crimeData = crimeDataMap[cityName];
     if (crimeData && crimeData.totalCrimes > 0) {
         crimeInfo = `<p class="mb-1"><strong>Total Crimes:</strong> ${crimeData.totalCrimes}</p>`;
+        crimeInfo += `<p class="mb-1"><strong>Crimes per 1,000:</strong> ${crimeRate}</p>`;
         crimeInfo += `<ul class="list-unstyled mb-0" style="font-size: 0.85rem;">`;
         for (let [cat, count] of Object.entries(crimeData.crimesByCategory)) {
             crimeInfo += `<li>${cat}: ${count}</li>`;
@@ -439,14 +441,26 @@ function updateComparisonContainer() {
             vsHtml += `<div class="diff-badge bg-population">Equal Population</div>`;
         }
 
-        // Crime Diff
+        // Crime Diff (Total)
         if (crime1 !== crime2 && (crime1 > 0 || crime2 > 0)) {
             let heroCrime = crime1 > crime2 ? city1 : city2;
             let crimeDiff = Math.abs(crime1 - crime2);
             let crimePerc = crime1 && crime2 && Math.min(crime1, crime2) > 0 ? ((crimeDiff / Math.min(crime1, crime2)) * 100).toFixed(1) + '%' : (Math.min(crime1, crime2) === 0 ? '100% (No baseline data)' : 'N/A');
-            vsHtml += `<div class="diff-badge bg-crime">${heroCrime} has <b>${crimePerc}</b> more crimes (+${crimeDiff.toLocaleString()})</div>`;
+            vsHtml += `<div class="diff-badge bg-crime">${heroCrime} has <b>${crimePerc}</b> more total crimes (+${crimeDiff.toLocaleString()})</div>`;
         } else if (crime1 === crime2 && crime1 > 0) {
-            vsHtml += `<div class="diff-badge bg-crime">Equal Crimes</div>`;
+            vsHtml += `<div class="diff-badge bg-crime">Equal Total Crimes</div>`;
+        }
+
+        // Crime Diff (Rate)
+        let rate1 = getCrimeRate(city1);
+        let rate2 = getCrimeRate(city2);
+        if (rate1 !== rate2 && (rate1 > 0 || rate2 > 0)) {
+            let heroRate = rate1 > rate2 ? city1 : city2;
+            let rateDiff = Math.abs(rate1 - rate2);
+            let ratePerc = rate1 && rate2 && Math.min(rate1, rate2) > 0 ? ((rateDiff / Math.min(rate1, rate2)) * 100).toFixed(1) + '%' : (Math.min(rate1, rate2) === 0 ? '100% (No baseline data)' : 'N/A');
+            vsHtml += `<div class="diff-badge bg-crime" style="margin-top: 5px; opacity: 0.9;">${heroRate} has a <b>${ratePerc}</b> higher crime rate (+${rateDiff.toFixed(1)} per 1,000)</div>`;
+        } else if (rate1 === rate2 && rate1 > 0) {
+            vsHtml += `<div class="diff-badge bg-crime" style="margin-top: 5px; opacity: 0.9;">Equal Crime Rate per 1,000</div>`;
         }
 
         vsCard.innerHTML = vsHtml;
@@ -467,3 +481,5 @@ function updateComparisonContainer() {
         });
     }
 }
+
+
