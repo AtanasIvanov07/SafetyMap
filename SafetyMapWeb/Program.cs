@@ -30,6 +30,23 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
 });
 
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = googleAuthNSection["ClientId"] ?? string.Empty;
+        options.ClientSecret = googleAuthNSection["ClientSecret"] ?? string.Empty;
+    })
+    .AddFacebook(options =>
+    {
+        var facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+        options.AppId = facebookAuthNSection["AppId"] ?? string.Empty;
+        options.AppSecret = facebookAuthNSection["AppSecret"] ?? string.Empty;
+
+        // Clear the default scopes to avoid requesting 'email' which Facebook restricts
+        options.Scope.Clear();
+    });
+
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<ICrimeCategoryService, CrimeCategoryService>();
 builder.Services.AddScoped<INeighborhoodService, NeighborhoodService>();

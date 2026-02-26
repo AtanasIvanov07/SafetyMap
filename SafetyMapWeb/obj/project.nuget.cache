@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "fYH18JMwjlM=",
+  "dgSpecHash": "9kX37IA1rTo=",
   "success": true,
   "projectFilePath": "C:\\Users\\2026\\Desktop\\SafetyMap\\SafetyMapWeb\\SafetyMapWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\2026\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\2026\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
     "C:\\Users\\2026\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\2026\\.nuget\\packages\\microsoft.aspnetcore.authentication.facebook\\8.0.7\\microsoft.aspnetcore.authentication.facebook.8.0.7.nupkg.sha512",
+    "C:\\Users\\2026\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\8.0.7\\microsoft.aspnetcore.authentication.google.8.0.7.nupkg.sha512",
     "C:\\Users\\2026\\.nuget\\packages\\microsoft.aspnetcore.diagnostics.entityframeworkcore\\8.0.22\\microsoft.aspnetcore.diagnostics.entityframeworkcore.8.0.22.nupkg.sha512",
     "C:\\Users\\2026\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\8.0.7\\microsoft.aspnetcore.identity.entityframeworkcore.8.0.7.nupkg.sha512",
     "C:\\Users\\2026\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\8.0.22\\microsoft.aspnetcore.identity.ui.8.0.22.nupkg.sha512",

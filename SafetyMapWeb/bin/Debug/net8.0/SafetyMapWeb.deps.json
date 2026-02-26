@@ -8,6 +8,8 @@
     ".NETCoreApp,Version=v8.0": {
       "SafetyMapWeb/1.0.0": {
         "dependencies": {
+          "Microsoft.AspNetCore.Authentication.Facebook": "8.0.7",
+          "Microsoft.AspNetCore.Authentication.Google": "8.0.7",
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "8.0.22",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.7",
           "Microsoft.AspNetCore.Identity.UI": "8.0.22",
@@ -52,6 +54,22 @@
           "lib/net6.0/Humanizer.dll": {
             "assemblyVersion": "2.14.0.0",
             "fileVersion": "2.14.1.48190"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.Facebook/8.0.7": {
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.Facebook.dll": {
+            "assemblyVersion": "8.0.7.0",
+            "fileVersion": "8.0.724.31402"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.Google/8.0.7": {
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.Google.dll": {
+            "assemblyVersion": "8.0.7.0",
+            "fileVersion": "8.0.724.31402"
           }
         }
       },
@@ -807,6 +825,20 @@
       "sha512": "sha512-lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "path": "humanizer.core/2.14.1",
       "hashPath": "humanizer.core.2.14.1.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.Facebook/8.0.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UlZ2O0bhFI2NSn8O+jlUq68CKW1eSUE8e50WTecyoAooPATdfy+6d2B2IE8l1RWmiYEstFD6LNRFM4qZXF343w==",
+      "path": "microsoft.aspnetcore.authentication.facebook/8.0.7",
+      "hashPath": "microsoft.aspnetcore.authentication.facebook.8.0.7.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.Google/8.0.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ToVB95+oz8gE6E8Y3ziXsNsDimWkmbYo1EKkLmcjmpbIbydY9wccdepD/d32yYFz7HoIJo+RA6EPppB4BOZgfA==",
+      "path": "microsoft.aspnetcore.authentication.google/8.0.7",
+      "hashPath": "microsoft.aspnetcore.authentication.google.8.0.7.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/8.0.22": {
       "type": "package",

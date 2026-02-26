@@ -92,5 +92,28 @@ namespace SafetyMapWeb.Controllers
             await _accountService.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _accountService.GetExternalLoginProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null)
+        {
+            var result = await _accountService.ExternalLoginCallbackAsync();
+
+            if (result.Succeeded)
+            {
+                return LocalRedirect(returnUrl ?? Url.Content("~/"));
+            }
+
+            return RedirectToAction(nameof(Login));
+        }
     }
 }

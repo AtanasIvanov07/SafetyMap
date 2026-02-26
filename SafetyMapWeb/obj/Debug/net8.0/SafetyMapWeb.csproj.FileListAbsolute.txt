@@ -304,3 +304,5 @@ C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapWeb\obj\Debug\net8.0\Safe
 C:\Users\Student6\Desktop\SafetyMap\SafetyMap\SafetyMapWeb\obj\Debug\net8.0\ref\SafetyMapWeb.dll
 c:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\bin\Debug\net8.0\SafetyMap.Core.dll
 c:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\bin\Debug\net8.0\SafetyMap.Core.pdb
+C:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Facebook.dll
+C:\Users\2026\Desktop\SafetyMap\SafetyMapWeb\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll
