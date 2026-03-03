@@ -1,33 +1,45 @@
 @model SafetyMap.Core.DTOs.CrimeCategory.CrimeCategoryDTO
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Crime Category Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>CrimeCategory</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ColorCode)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ColorCode)
-            <div
-                style="width: 20px; height: 20px; background-color: @Model.ColorCode; display: inline-block; margin-left: 10px; border: 1px solid #000;">
-            </div>
-        </dd>
-    </dl>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-info-circle me-2"></i>Crime Category Details</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Directory</a>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="dashboard-card border-top border-secondary border-3">
+            <h4 class="text-info mb-4">@Model.Name</h4>
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4 text-light opacity-75 fw-normal mb-3">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-8 text-light fw-semibold mb-3">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+
+                <dt class="col-sm-4 text-light opacity-75 fw-normal mb-3">
+                    @Html.DisplayNameFor(model => model.ColorCode)
+                </dt>
+                <dd class="col-sm-8 text-light fw-semibold mb-3 d-flex align-items-center">
+                    <span class="font-monospace text-light opacity-75">@Html.DisplayFor(model => model.ColorCode)</span>
+                    <span class="rounded-circle ms-3 shadow-sm border border-secondary"
+                        style="width: 20px; height: 20px; background-color: @Model.ColorCode; display: inline-block;"></span>
+                </dd>
+            </dl>
+
+            <hr class="border-secondary my-4" />
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info text-dark px-4"><i
+                        class="bi bi-pencil me-1"></i>Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger px-4"><i
+                        class="bi bi-trash me-1"></i>Delete</a>
+            </div>
+        </div>
+    </div>
 </div>

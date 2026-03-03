@@ -4,77 +4,101 @@
     ViewData["Title"] = "Crime Statistics";
 }
 
-<h1>Crime Statistics</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-bar-chart-line me-2"></i>Crime Statistics</h1>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Create New Record</a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
+<div class="dashboard-card mb-4 p-3 border-0">
+    <form method="get">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-light opacity-75"
+                        title="Neighborhood"><i class="bi bi-geo-alt"></i></span>
+                    <input type="text" name="neighborhoodSearch"
+                        class="form-control bg-dark border-secondary text-light" placeholder="Neighborhood..."
+                        value="@Model.NeighborhoodSearch" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-light opacity-75" title="Category"><i
+                            class="bi bi-tag"></i></span>
+                    <input type="text" name="categorySearch" class="form-control bg-dark border-secondary text-light"
+                        placeholder="Category..." value="@Model.CategorySearch" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="year" class="form-control bg-dark border-secondary text-light"
+                    placeholder="Year (e.g., 2023)" value="@Model.Year" />
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-info px-4">Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2 text-light">Clear</a>
+            </div>
+        </div>
+    </form>
+</div>
 
-<form method="get" class="mb-4">
-    <div class="row g-2 align-items-center">
-        <div class="col-auto">
-            <input type="text" name="searchTerm" class="form-control" placeholder="Search neighborhood or category..."
-                value="@Model.SearchTerm" />
-        </div>
-        <div class="col-auto">
-            <input type="number" name="year" class="form-control" placeholder="Year (e.g., 2023)" value="@Model.Year" />
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-outline-secondary">Search</button>
-            <a asp-action="Index" class="btn btn-link">Clear</a>
-        </div>
+<div class="dashboard-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover table-borderless mb-0 align-middle">
+            <thead class="table-active">
+                <tr>
+                    <th class="ps-4">Neighborhood</th>
+                    <th>Category</th>
+                    <th>Crimes</th>
+                    <th>Year</th>
+                    <th>Trend</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Statistics)
+                {
+                    <tr>
+                        <td class="ps-4 fw-semibold text-light">@Html.DisplayFor(modelItem => item.NeighborhoodName)</td>
+                        <td>
+                            <span class="badge bg-secondary opacity-75 text-light fw-normal">@Html.DisplayFor(modelItem =>
+                            item.CrimeCategoryName)</span>
+                        </td>
+                        <td class="text-light fw-medium">@Html.DisplayFor(modelItem => item.CountOfCrimes)</td>
+                        <td class="text-light opacity-75">@Html.DisplayFor(modelItem => item.Year)</td>
+                        <td>
+                            @if (item.TrendPercentage > 0)
+                            {
+                                <span class="text-danger fw-semibold"><i
+                                        class="bi bi-graph-up-arrow me-1"></i>@Html.DisplayFor(modelItem =>
+                            item.TrendPercentage)%</span>
+                            }
+                            else if (item.TrendPercentage < 0)
+                            {
+                                <span class="text-success fw-semibold"><i
+                                        class="bi bi-graph-down-arrow me-1"></i>@Html.DisplayFor(modelItem =>
+                            item.TrendPercentage)%</span>
+                            }
+                            else
+                            {
+                                <span class="text-secondary fw-semibold"><i class="bi bi-dash me-1"></i>0%</span>
+                            }
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info" title="Edit"><i
+                                        class="bi bi-pencil"></i></a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light"
+                                    title="Details"><i class="bi bi-info-circle"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger"
+                                    title="Delete"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</form>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Neighborhood
-            </th>
-            <th>
-                Category
-            </th>
-            <th>
-                Crimes
-            </th>
-            <th>
-                Year
-            </th>
-            <th>
-                Trend
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Statistics)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NeighborhoodName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CrimeCategoryName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CountOfCrimes)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Year)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TrendPercentage)%
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+</div>
 
 @if (Model.TotalPages > 1)
 {
@@ -87,16 +111,21 @@
     }
 
     <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-            
+        <ul class="pagination pagination-sm justify-content-center" data-bs-theme="dark">
             <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="1" aria-label="First">
+                <a class="page-link border-secondary bg-dark text-light" asp-action="Index"
+                    asp-route-neighborhoodSearch="@Model.NeighborhoodSearch"
+                    asp-route-categorySearch="@Model.CategorySearch" asp-route-year="@Model.Year" asp-route-currentPage="1"
+                    aria-label="First">
                     <span aria-hidden="true">&laquo;&laquo;</span>
                 </a>
             </li>
-            
+
             <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@(Model.CurrentPage > 1 ? Model.CurrentPage - 1 : 1)" aria-label="Previous">
+                <a class="page-link border-secondary bg-dark text-light" asp-action="Index"
+                    asp-route-neighborhoodSearch="@Model.NeighborhoodSearch"
+                    asp-route-categorySearch="@Model.CategorySearch" asp-route-year="@Model.Year"
+                    asp-route-currentPage="@(Model.CurrentPage > 1 ? Model.CurrentPage - 1 : 1)" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -104,18 +133,28 @@
             @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@i">@i</a>
+                    <a class="page-link border-secondary @(i == Model.CurrentPage ? "bg-info text-dark border-info" : "bg-dark text-light")"
+                        asp-action="Index" asp-route-neighborhoodSearch="@Model.NeighborhoodSearch"
+                        asp-route-categorySearch="@Model.CategorySearch" asp-route-year="@Model.Year"
+                        asp-route-currentPage="@i">@i</a>
                 </li>
             }
 
             <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@(Model.CurrentPage < Model.TotalPages ? Model.CurrentPage + 1 : Model.TotalPages)" aria-label="Next">
+                <a class="page-link border-secondary bg-dark text-light" asp-action="Index"
+                    asp-route-neighborhoodSearch="@Model.NeighborhoodSearch"
+                    asp-route-categorySearch="@Model.CategorySearch" asp-route-year="@Model.Year"
+                    asp-route-currentPage="@(Model.CurrentPage < Model.TotalPages ? Model.CurrentPage + 1 : Model.TotalPages)"
+                    aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
-            
+
             <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-searchTerm="@Model.SearchTerm" asp-route-year="@Model.Year" asp-route-currentPage="@Model.TotalPages" aria-label="Last">
+                <a class="page-link border-secondary bg-dark text-light" asp-action="Index"
+                    asp-route-neighborhoodSearch="@Model.NeighborhoodSearch"
+                    asp-route-categorySearch="@Model.CategorySearch" asp-route-year="@Model.Year"
+                    asp-route-currentPage="@Model.TotalPages" aria-label="Last">
                     <span aria-hidden="true">&raquo;&raquo;</span>
                 </a>
             </li>

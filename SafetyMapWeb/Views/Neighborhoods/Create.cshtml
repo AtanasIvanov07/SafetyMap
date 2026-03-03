@@ -1,40 +1,46 @@
 @model SafetyMapWeb.Models.Neighborhoods.NeighborhoodCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Neighborhood";
 }
 
-<h1>Create</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-plus-lg me-2"></i>Create New Neighborhood</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Directory</a>
+</div>
 
-<h4>Neighborhood</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SafetyRating" class="control-label"></label>
-                <input asp-for="SafetyRating" class="form-control" />
-                <span asp-validation-for="SafetyRating" class="text-danger"></span>
-            </div>
+    <div class="col-md-8 col-lg-6">
+        <div class="dashboard-card border-top border-primary border-3">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="form-group">
-                <label asp-for="CityId" class="control-label"></label>
-                <select asp-for="CityId" class="form-control" asp-items="Model.Cities">
-                    <option value="">-- Select City --</option>
-                </select>
-                <span asp-validation-for="CityId" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label text-light fw-semibold"></label>
+                    <input asp-for="Name" class="form-control form-control-lg" placeholder="Enter neighborhood name..." autocomplete="off" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SafetyRating" class="form-label text-light fw-semibold"></label>
+                    <input asp-for="SafetyRating" class="form-control form-control-lg" placeholder="1-10" autocomplete="off" />
+                    <span asp-validation-for="SafetyRating" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="CityId" class="form-label text-light fw-semibold"></label>
+                    <select asp-for="CityId" asp-items="Model.Cities" class="form-select form-select-lg bg-dark text-light border-secondary">
+                        <option value="">-- Select City --</option>
+                    </select>
+                    <span asp-validation-for="CityId" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary px-4 py-2"><i class="bi bi-check2-circle me-1"></i>Create Neighborhood</button>
+                    <a asp-action="Index" class="btn btn-dark px-4 py-2"><i class="bi bi-x-circle me-1"></i>Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

@@ -4,7 +4,8 @@ namespace SafetyMapWeb.Models.CrimeStatistics
 {
     public class CrimeStatisticQueryViewModel
     {
-        public string? SearchTerm { get; set; }
+        public string? NeighborhoodSearch { get; set; }
+        public string? CategorySearch { get; set; }
         public int? Year { get; set; }
 
         public int CurrentPage { get; set; } = 1;

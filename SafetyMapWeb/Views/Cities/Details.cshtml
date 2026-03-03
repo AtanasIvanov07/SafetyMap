@@ -1,31 +1,41 @@
-@model SafetyMapData.Entities.City
+@model SafetyMap.Core.DTOs.City.CityDTO
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "City Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>City</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Population)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Population)
-        </dd>
-    </dl>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-info-circle me-2"></i>City Details</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Directory</a>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="dashboard-card border-top border-secondary border-3">
+            <h4 class="text-info mb-4">@Model.Name</h4>
+            
+            <dl class="row mb-0">
+                <dt class="col-sm-4 text-light opacity-75 fw-normal mb-3">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-8 text-light fw-semibold mb-3">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+
+                <dt class="col-sm-4 text-light opacity-75 fw-normal mb-3">
+                    @Html.DisplayNameFor(model => model.Population)
+                </dt>
+                <dd class="col-sm-8 text-light fw-semibold mb-3">
+                    @Html.DisplayFor(model => model.Population)
+                </dd>
+            </dl>
+
+            <hr class="border-secondary my-4" />
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info text-dark px-4"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger px-4"><i class="bi bi-trash me-1"></i>Delete</a>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,35 +1,54 @@
 @model SafetyMapWeb.Models.CrimeCategories.CrimeCategoryCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Crime Category";
 }
 
-<h1>Create</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-plus-lg me-2"></i>Create Crime Category</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Directory</a>
+</div>
 
-<h4>CrimeCategory</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ColorCode" class="control-label"></label>
-                <input asp-for="ColorCode" class="form-control" type="color" />
-                <span asp-validation-for="ColorCode" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-            </div>
-        </form>
+    <div class="col-md-8 col-lg-6">
+        <div class="dashboard-card border-top border-primary border-3">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label text-light fw-semibold"></label>
+                    <input asp-for="Name" class="form-control form-control-lg" placeholder="e.g., Robbery"
+                        autocomplete="off" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="ColorCode" class="form-label text-light fw-semibold"></label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-dark border-secondary"><i
+                                class="bi bi-palette text-light"></i></span>
+                        <input asp-for="ColorCode" type="color"
+                            class="form-control form-control-color bg-dark border-secondary p-1"
+                            style="max-width: 60px;" title="Choose your color">
+                        <input type="text" asp-for="ColorCode" class="form-control" placeholder="#HEXCODE"
+                            pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" maxlength="7"
+                            oninput="this.previousElementSibling.value = this.value" />
+                    </div>
+                    <span asp-validation-for="ColorCode" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary px-4 py-2"><i
+                            class="bi bi-check2-circle me-1"></i>Create Category</button>
+                    <a asp-action="Index" class="btn btn-dark px-4 py-2"><i class="bi bi-x-circle me-1"></i>Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

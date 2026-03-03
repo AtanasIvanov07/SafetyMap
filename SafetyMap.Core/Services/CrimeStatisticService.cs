@@ -15,18 +15,23 @@ namespace SafetyMap.Core.Services
             _context = context;
         }
 
-        public async Task<(IEnumerable<CrimeStatisticDTO> Statistics, int TotalCount)> GetAllAsync(string? searchTerm = null, int? year = null, int currentPage = 1, int itemsPerPage = 20)
+        public async Task<(IEnumerable<CrimeStatisticDTO> Statistics, int TotalCount)> GetAllAsync(string? neighborhoodSearch = null, string? categorySearch = null, int? year = null, int currentPage = 1, int itemsPerPage = 20)
         {
             var query = _context.CrimeStatistics
                 .Include(c => c.Neighborhood)
                 .Include(c => c.CrimeCategory)
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(searchTerm))
+            if (!string.IsNullOrWhiteSpace(neighborhoodSearch))
             {
-                var lowerSearchTerm = searchTerm.ToLower();
-                query = query.Where(c => (c.Neighborhood != null && c.Neighborhood.Name.ToLower().Contains(lowerSearchTerm)) ||
-                                         (c.CrimeCategory != null && c.CrimeCategory.Name.ToLower().Contains(lowerSearchTerm)));
+                var lowerSearch = neighborhoodSearch.ToLower();
+                query = query.Where(c => c.Neighborhood != null && c.Neighborhood.Name.ToLower().Contains(lowerSearch));
+            }
+
+            if (!string.IsNullOrWhiteSpace(categorySearch))
+            {
+                var lowerSearch = categorySearch.ToLower();
+                query = query.Where(c => c.CrimeCategory != null && c.CrimeCategory.Name.ToLower().Contains(lowerSearch));
             }
 
             if (year.HasValue)
@@ -55,6 +60,38 @@ namespace SafetyMap.Core.Services
                 .ToListAsync();
 
             return (statistics, totalCount);
+        }
+
+        public async Task<IEnumerable<CrimeStatisticDTO>> GetUserSubscribedStatisticsAsync(string userId)
+        {
+            var userSubscribedNeighborhoodIds = await _context.UserSubscriptions
+                .Where(us => us.UserId == userId)
+                .Select(us => us.NeighborhoodId)
+                .ToListAsync();
+
+            if (!userSubscribedNeighborhoodIds.Any())
+            {
+                return new List<CrimeStatisticDTO>();
+            }
+
+            return await _context.CrimeStatistics
+                .Include(c => c.Neighborhood)
+                .Include(c => c.CrimeCategory)
+                .Where(c => userSubscribedNeighborhoodIds.Contains(c.NeighborhoodId))
+                .OrderByDescending(c => c.Year)
+                .ThenBy(c => c.Neighborhood.Name)
+                .Select(c => new CrimeStatisticDTO
+                {
+                    Id = c.Id,
+                    NeighborhoodId = c.NeighborhoodId,
+                    NeighborhoodName = c.Neighborhood != null ? c.Neighborhood.Name : "N/A",
+                    CrimeCategoryId = c.CrimeCategoryId,
+                    CrimeCategoryName = c.CrimeCategory != null ? c.CrimeCategory.Name : "N/A",
+                    CountOfCrimes = c.CountOfCrimes,
+                    Year = c.Year,
+                    TrendPercentage = c.TrendPercentage
+                })
+                .ToListAsync();
         }
 
         public async Task<CrimeStatisticDTO?> GetByIdAsync(Guid id)

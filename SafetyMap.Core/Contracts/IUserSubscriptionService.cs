@@ -5,6 +5,8 @@ namespace SafetyMap.Core.Contracts
     public interface IUserSubscriptionService
     {
         Task<IEnumerable<UserSubscriptionDTO>> GetAllAsync();
+        Task<IEnumerable<UserSubscriptionDTO>> GetUserSubscriptionsAsync(string userId);
+        Task<int> GetSubscriptionCountAsync(string userId);
         Task<UserSubscriptionDTO?> GetByIdAsync(Guid id);
         Task CreateAsync(UserSubscriptionCreateDTO dto);
         Task UpdateAsync(UserSubscriptionEditDTO dto);

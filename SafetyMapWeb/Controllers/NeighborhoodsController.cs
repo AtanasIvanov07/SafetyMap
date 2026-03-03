@@ -20,7 +20,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var neighborhoods = await _neighborhoodService.GetAllAsync();
@@ -37,7 +37,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();

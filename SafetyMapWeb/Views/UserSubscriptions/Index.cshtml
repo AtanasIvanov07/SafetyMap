@@ -4,44 +4,39 @@
     ViewData["Title"] = "User Subscriptions";
 }
 
-<h1>User Subscriptions</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-bell me-2"></i>User Subscriptions</h1>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Create New Subscription</a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NeighborhoodName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SubscribedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NeighborhoodName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubscribedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="dashboard-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover table-borderless mb-0 align-middle">
+            <thead class="table-active">
+                <tr>
+                    <th class="ps-4">@Html.DisplayNameFor(model => model.UserId)</th>
+                    <th>@Html.DisplayNameFor(model => model.NeighborhoodName)</th>
+                    <th>@Html.DisplayNameFor(model => model.SubscribedAt)</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="ps-4 text-truncate font-monospace opacity-75" style="max-width: 250px;" title="@item.UserId">@Html.DisplayFor(modelItem => item.UserId)</td>
+                        <td class="fw-semibold text-light">@Html.DisplayFor(modelItem => item.NeighborhoodName)</td>
+                        <td class="text-light opacity-75">@Html.DisplayFor(modelItem => item.SubscribedAt)</td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light" title="Details"><i class="bi bi-info-circle"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

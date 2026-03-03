@@ -46,8 +46,36 @@ namespace SafetyMap.Core.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<UserSubscriptionDTO>> GetUserSubscriptionsAsync(string userId)
+        {
+            return await _context.UserSubscriptions
+                .Include(u => u.Neighborhood)
+                .Where(u => u.UserId == userId)
+                .Select(u => new UserSubscriptionDTO
+                {
+                    Id = u.Id,
+                    UserId = u.UserId,
+                    NeighborhoodId = u.NeighborhoodId,
+                    NeighborhoodName = u.Neighborhood != null ? u.Neighborhood.Name : "N/A",
+                    SubscribedAt = u.SubscribedAt
+                })
+                .ToListAsync();
+        }
+
+        public async Task<int> GetSubscriptionCountAsync(string userId)
+        {
+            return await _context.UserSubscriptions
+                .Where(u => u.UserId == userId)
+                .CountAsync();
+        }
+
         public async Task CreateAsync(UserSubscriptionCreateDTO dto)
         {
+            if (await GetSubscriptionCountAsync(dto.UserId) >= 3)
+            {
+                throw new InvalidOperationException("User has reached the maximum limit of 3 subscriptions.");
+            }
+
             var subscription = new UserSubscription
             {
                 Id = Guid.NewGuid(),

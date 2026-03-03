@@ -1,0 +1,150 @@
+@{
+    ViewData["Title"] = "My Dashboard";
+    var maxSubscriptions = 3;
+    var currentSubscriptionsCount = (int)(ViewBag.SubscriptionCount ?? 0);
+    var canSubscribe = currentSubscriptionsCount < maxSubscriptions;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 text-light fw-bold mb-1"><i class="bi bi-person-badge text-primary me-2"></i>Personal Dashboard</h1>
+            <p class="text-light opacity-75 mb-0">Manage your neighborhood alerts and view tailored crime statistics.</p>
+        </div>
+        
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success bg-success bg-opacity-25 text-light border-0 py-2 px-3 mb-0">
+                <i class="bi bi-check-circle-fill me-2 text-success"></i>@TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger bg-danger bg-opacity-25 text-light border-0 py-2 px-3 mb-0">
+                <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>@TempData["ErrorMessage"]
+            </div>
+        }
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Subscriptions Widget -->
+        <div class="col-lg-4">
+            <div class="dashboard-card border-top border-info border-3 h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0"><i class="bi bi-bookmark-star text-info me-2"></i>My Monitored Zones</h5>
+                    <span class="badge @(currentSubscriptionsCount >= maxSubscriptions ? "bg-warning text-dark" : "bg-info text-dark")">@currentSubscriptionsCount / @maxSubscriptions</span>
+                </div>
+                <hr class="border-secondary mt-0 mb-3" />
+
+                @if (ViewBag.Subscriptions != null && ((List<SafetyMap.Core.DTOs.UserSubscription.UserSubscriptionDTO>)ViewBag.Subscriptions).Any())
+                {
+                    <ul class="list-group list-group-flush bg-transparent">
+                        @foreach (var sub in (List<SafetyMap.Core.DTOs.UserSubscription.UserSubscriptionDTO>)ViewBag.Subscriptions)
+                        {
+                            <li class="list-group-item bg-transparent text-light px-0 d-flex justify-content-between align-items-center border-secondary">
+                                <div>
+                                    <span class="fw-semibold">@sub.NeighborhoodName</span>
+                                    <div class="small opacity-50">Since @sub.SubscribedAt.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                <form asp-action="Unsubscribe" method="post" class="m-0">
+                                    <input type="hidden" name="subscriptionId" value="@sub.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Unsubscribe"><i class="bi bi-x-circle"></i></button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-light opacity-50">
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        <p class="mb-0">You aren't monitoring any zones yet.</p>
+                    </div>
+                }
+
+                @if (canSubscribe)
+                {
+                    <form asp-action="Subscribe" method="post" class="mt-4 pt-3 border-top border-secondary">
+                        <label class="form-label text-light small fw-bold">Add New Zone</label>
+                        <div class="input-group">
+                            <select name="neighborhoodId" class="form-select bg-dark text-light border-secondary" required>
+                                <option value="">-- Select Neighborhood --</option>
+                                @foreach (var n in (List<KeyValuePair<string, string>>)ViewBag.NeighborhoodList)
+                                {
+                                    <option value="@n.Key">@n.Value</option>
+                                }
+                            </select>
+                            <button class="btn btn-info action-btn" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="mt-4 pt-3 border-top border-secondary text-center text-warning small">
+                        <i class="bi bi-info-circle me-1"></i>You have reached the maximum of @maxSubscriptions subscriptions.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Tailored Statistics Widget -->
+        <div class="col-lg-8">
+            <div class="dashboard-card border-top border-primary border-3 h-100 p-0">
+                <div class="p-4 border-bottom border-secondary">
+                    <h5 class="text-light mb-0"><i class="bi bi-bar-chart-line text-primary me-2"></i>Statistics Highlights</h5>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-borderless mb-0 align-middle">
+                        <thead class="table-active">
+                            <tr>
+                                <th class="ps-4">Zone</th>
+                                <th>Category</th>
+                                <th>Incidents</th>
+                                <th>Year</th>
+                                <th>Trend</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.Statistics != null && ((List<SafetyMap.Core.DTOs.CrimeStatistic.CrimeStatisticDTO>)ViewBag.Statistics).Any())
+                            {
+                                @foreach (var stat in (List<SafetyMap.Core.DTOs.CrimeStatistic.CrimeStatisticDTO>)ViewBag.Statistics)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-semibold text-light">@stat.NeighborhoodName</td>
+                                        <td><span class="badge bg-secondary opacity-75 text-light fw-normal">@stat.CrimeCategoryName</span></td>
+                                        <td class="text-light fw-medium">@stat.CountOfCrimes</td>
+                                        <td class="text-light opacity-75">@stat.Year</td>
+                                        <td>
+                                            @if(stat.TrendPercentage > 0)
+                                            {
+                                                <span class="text-danger fw-semibold"><i class="bi bi-graph-up-arrow me-1"></i>@stat.TrendPercentage%</span>
+                                            }
+                                            else if(stat.TrendPercentage < 0)
+                                            {
+                                                <span class="text-success fw-semibold"><i class="bi bi-graph-down-arrow me-1"></i>@stat.TrendPercentage%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-secondary fw-semibold"><i class="bi bi-dash me-1"></i>0%</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-light opacity-50">
+                                        <i class="bi bi-shield-check fs-1 d-block mb-3"></i>
+                                        <p class="mb-0 fs-5">No statistics available for your monitored zones.</p>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

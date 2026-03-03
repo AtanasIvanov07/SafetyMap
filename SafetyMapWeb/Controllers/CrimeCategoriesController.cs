@@ -17,7 +17,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var categories = await _crimeCategoryService.GetAllAsync();
@@ -33,7 +33,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)

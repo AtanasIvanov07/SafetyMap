@@ -18,11 +18,11 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Index([FromQuery] string? searchTerm, [FromQuery] int? year, [FromQuery] int currentPage = 1)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Index([FromQuery] string? neighborhoodSearch, [FromQuery] string? categorySearch, [FromQuery] int? year, [FromQuery] int currentPage = 1)
         {
             int itemsPerPage = 20;
-            var (statistics, totalCount) = await _crimeStatisticService.GetAllAsync(searchTerm, year, currentPage, itemsPerPage);
+            var (statistics, totalCount) = await _crimeStatisticService.GetAllAsync(neighborhoodSearch, categorySearch, year, currentPage, itemsPerPage);
 
             var viewModels = statistics.Select(c => new CrimeStatisticIndexViewModel
             {
@@ -36,7 +36,8 @@ namespace SafetyMapWeb.Controllers
 
             var queryModel = new CrimeStatisticQueryViewModel
             {
-                SearchTerm = searchTerm,
+                NeighborhoodSearch = neighborhoodSearch,
+                CategorySearch = categorySearch,
                 Year = year,
                 CurrentPage = currentPage,
                 TotalPages = (int)Math.Ceiling(totalCount / (double)itemsPerPage),
@@ -47,7 +48,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null) return NotFound();

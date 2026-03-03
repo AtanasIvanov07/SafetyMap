@@ -1,70 +1,109 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SafetyMapWeb</title>
+    <title>@ViewData["Title"] - SafetyMap</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SafetyMapWeb.styles.css" asp-append-version="true" />
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg border-bottom box-shadow dashboard-navbar">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SafetyMapWeb</a>
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home"
+                    asp-action="Index">
+                    <i class="bi bi-shield-check text-primary fs-4"></i>
+                    <span class="fw-bold tracking-wide">SafetyMap Command</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1 ms-3">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i> Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Map" asp-action="Index">
+                                <i class="bi bi-map me-1"></i> Map
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Map" asp-action="Index">Map</a>
-                        </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-info" asp-area="" asp-controller="MyDashboard" asp-action="Index">
+                                    <i class="bi bi-person-badge fw-bold me-1"></i> My Dashboard
+                                </a>
+                            </li>
+                        }
                         @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Admin Panel
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Cities" asp-action="Index">
+                                    <i class="bi bi-buildings me-1"></i> Cities
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="CrimeCategories"
-                                            asp-action="Index">Crime Categories</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="CrimeStatistics"
-                                            asp-action="Index">Crime Statistics</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Neighborhoods"
-                                            asp-action="Index">Neighborhoods</a></li>
-                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Neighborhoods" asp-action="Index">
+                                    <i class="bi bi-pin-map me-1"></i> Neighborhoods
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="CrimeStatistics" asp-action="Index">
+                                    <i class="bi bi-bar-chart-line me-1"></i> Crime Statistics
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="UserSubscriptions" asp-action="Index">
+                                    <i class="bi bi-bell me-1"></i> Subscriptions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="CrimeCategories" asp-action="Index">
+                                    <i class="bi bi-tags me-1"></i> Crime Categories
+                                </a>
                             </li>
                         }
                     </ul>
-                    <partial name="_LoginPartial" />
+                    <div class="d-flex align-items-center">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - SafetyMapWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Main Wrapper -->
+    <main role="main" class="flex-grow-1 d-flex flex-column mb-4 mt-3">
+        <div class="container-fluid px-4 h-100 d-flex flex-column">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Sticky Footer -->
+    <footer class="dashboard-footer text-muted border-top mt-auto py-3">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <div>
+                &copy; 2026 - <span class="fw-bold text-light">SafetyMap Command</span>
+            </div>
+            <div>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacy
+                    Policy</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="text-decoration-none">Terms of Service</a>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
