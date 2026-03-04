@@ -431,7 +431,7 @@ function generateCityCardHTML(cityName) {
     return `
         <div class="d-flex justify-content-between align-items-start border-bottom mb-2 pb-1">
             <h6 class="mb-0 text-primary">${cityName}</h6>
-            <button type="button" class="btn-close btn-sm" aria-label="Close" onclick="toggleCompareCity('${cityName}'); geoJsonLayer.setStyle(style);"></button>
+            <button type="button" class="btn-close btn-sm" aria-label="Close" onclick="toggleCompareCity('${cityName}')"></button>
         </div>
         <p class="mb-1"><strong>Population:</strong> ${pop.toLocaleString()}</p>
         ${crimeInfo}
