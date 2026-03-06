@@ -26,6 +26,7 @@ namespace SafetyMapWeb.Controllers
             {
                 Id = u.Id,
                 UserId = u.UserId,
+                UserName = u.UserName,
                 NeighborhoodName = u.NeighborhoodName,
                 SubscribedAt = u.SubscribedAt
             }).ToList();

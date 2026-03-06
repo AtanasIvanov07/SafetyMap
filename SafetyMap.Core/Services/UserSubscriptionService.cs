@@ -19,10 +19,12 @@ namespace SafetyMap.Core.Services
         {
             return await _context.UserSubscriptions
                 .Include(u => u.Neighborhood)
+                .Include(u => u.User)
                 .Select(u => new UserSubscriptionDTO
                 {
                     Id = u.Id,
                     UserId = u.UserId,
+                    UserName = u.User != null ? u.User.UserName : "Unknown",
                     NeighborhoodId = u.NeighborhoodId,
                     NeighborhoodName = u.Neighborhood != null ? u.Neighborhood.Name : "N/A",
                     SubscribedAt = u.SubscribedAt
@@ -34,11 +36,13 @@ namespace SafetyMap.Core.Services
         {
             return await _context.UserSubscriptions
                 .Include(u => u.Neighborhood)
+                .Include(u => u.User)
                 .Where(u => u.Id == id)
                 .Select(u => new UserSubscriptionDTO
                 {
                     Id = u.Id,
                     UserId = u.UserId,
+                    UserName = u.User != null ? u.User.UserName : "Unknown",
                     NeighborhoodId = u.NeighborhoodId,
                     NeighborhoodName = u.Neighborhood != null ? u.Neighborhood.Name : "N/A",
                     SubscribedAt = u.SubscribedAt
@@ -50,11 +54,13 @@ namespace SafetyMap.Core.Services
         {
             return await _context.UserSubscriptions
                 .Include(u => u.Neighborhood)
+                .Include(u => u.User)
                 .Where(u => u.UserId == userId)
                 .Select(u => new UserSubscriptionDTO
                 {
                     Id = u.Id,
                     UserId = u.UserId,
+                    UserName = (u.User != null && u.User.UserName != null) ? u.User.UserName : "Unknown",
                     NeighborhoodId = u.NeighborhoodId,
                     NeighborhoodName = u.Neighborhood != null ? u.Neighborhood.Name : "N/A",
                     SubscribedAt = u.SubscribedAt

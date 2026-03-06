@@ -4,6 +4,7 @@ namespace SafetyMapWeb.Models.UserSubscriptions
     {
         public Guid Id { get; set; }
         public string UserId { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         public string NeighborhoodName { get; set; } = string.Empty;
         public DateTime SubscribedAt { get; set; }
     }

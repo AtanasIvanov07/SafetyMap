@@ -14,7 +14,7 @@
         <table class="table table-dark table-hover table-borderless mb-0 align-middle">
             <thead class="table-active">
                 <tr>
-                    <th class="ps-4">@Html.DisplayNameFor(model => model.UserId)</th>
+                    <th class="ps-4">@Html.DisplayNameFor(model => model.UserName)</th>
                     <th>@Html.DisplayNameFor(model => model.NeighborhoodName)</th>
                     <th>@Html.DisplayNameFor(model => model.SubscribedAt)</th>
                     <th class="text-end pe-4">Actions</th>
@@ -24,14 +24,18 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td class="ps-4 text-truncate font-monospace opacity-75" style="max-width: 250px;" title="@item.UserId">@Html.DisplayFor(modelItem => item.UserId)</td>
+                        <td class="ps-4 text-truncate fw-semibold text-light" style="max-width: 250px;"
+                            title="@item.UserName">@Html.DisplayFor(modelItem => item.UserName)</td>
                         <td class="fw-semibold text-light">@Html.DisplayFor(modelItem => item.NeighborhoodName)</td>
                         <td class="text-light opacity-75">@Html.DisplayFor(modelItem => item.SubscribedAt)</td>
                         <td class="text-end pe-4">
                             <div class="btn-group btn-group-sm" role="group">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info" title="Edit"><i class="bi bi-pencil"></i></a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light" title="Details"><i class="bi bi-info-circle"></i></a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info" title="Edit"><i
+                                        class="bi bi-pencil"></i></a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-light"
+                                    title="Details"><i class="bi bi-info-circle"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger"
+                                    title="Delete"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
