@@ -56,7 +56,7 @@ namespace SafetyMapWeb.Tests.Controllers
             var data = result!.Value as IEnumerable<RegionPopulationViewModel>;
             Assert.That(data, Is.Not.Null);
             Assert.That(data!.Count(), Is.EqualTo(2));
-            Assert.That(data!.Any(d => d.Name == "City 1"), Is.True);
+            Assert.That(data.Any(d => d.Name == "City 1"), Is.True);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace SafetyMapWeb.Tests.Controllers
         {
             var crimeData = new List<CityCrimeDto>
             {
-                new CityCrimeDto { CityName = "City 1", TotalCrimes = 10, CrimeRatePer1000 = 5 }
+                new CityCrimeDto { CityName = "City 1", TotalCrimes = 10 }
             };
             var categoryId = Guid.NewGuid();
             int year = 2023;
@@ -77,7 +77,20 @@ namespace SafetyMapWeb.Tests.Controllers
             var data = result!.Value as IEnumerable<CityCrimeDto>;
             Assert.That(data, Is.Not.Null);
             Assert.That(data!.Count(), Is.EqualTo(1));
-            Assert.That(data!.First().CityName, Is.EqualTo("City 1"));
+            Assert.That(data.First().CityName, Is.EqualTo("City 1"));
+        }
+
+        [Test]
+        public async Task GetCrimeData_ShouldPassNullableFiltersToService()
+        {
+            _mapServiceMock.Setup(s => s.GetCrimeDataAsync(null, null))
+                .ReturnsAsync(new List<CityCrimeDto>());
+
+            var result = await _controller.GetCrimeData(null, null) as JsonResult;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Value, Is.AssignableTo<IEnumerable<CityCrimeDto>>());
+            _mapServiceMock.Verify(s => s.GetCrimeDataAsync(null, null), Times.Once);
         }
 
         [Test]
@@ -95,7 +108,7 @@ namespace SafetyMapWeb.Tests.Controllers
             var data = result!.Value as IEnumerable<CrimeCategoryDTO>;
             Assert.That(data, Is.Not.Null);
             Assert.That(data!.Count(), Is.EqualTo(1));
-            Assert.That(data!.First().Name, Is.EqualTo("Category 1"));
+            Assert.That(data.First().Name, Is.EqualTo("Category 1"));
         }
     }
 }

@@ -72,14 +72,65 @@ Promise.all([
         categorySelect.appendChild(opt);
     });
 
-    geoJsonData = geoJson;
+    let originalFeatures = geoJson.features;
+    let baseGeoJsonData = Object.assign({}, geoJson);
+
+    function shiftFeature(feature, offset) {
+        if (!feature.geometry || !feature.geometry.coordinates) return;
+        if (feature.geometry.type === 'Polygon') {
+            feature.geometry.coordinates.forEach(ring => {
+                ring.forEach(coord => { coord[0] += offset; });
+            });
+        } else if (feature.geometry.type === 'MultiPolygon') {
+            feature.geometry.coordinates.forEach(poly => {
+                poly.forEach(ring => {
+                    ring.forEach(coord => { coord[0] += offset; });
+                });
+            });
+        }
+    }
+
+    geoJsonData = baseGeoJsonData;
+    geoJsonLayer = L.featureGroup().addTo(map);
+    let worldLayers = {};
+
+    function updateGeoJsonWorlds() {
+        let centerLng = map.getCenter().lng;
+        let currentWorldIndex = Math.round(centerLng / 360);
+
+        let neededWorlds = [currentWorldIndex - 1, currentWorldIndex, currentWorldIndex + 1];
+
+        for (let w in worldLayers) {
+            if (!neededWorlds.includes(parseInt(w))) {
+                geoJsonLayer.removeLayer(worldLayers[w]);
+                delete worldLayers[w];
+            }
+        }
+
+        neededWorlds.forEach(w => {
+            if (!worldLayers[w]) {
+                let offset = w * 360;
+                let copies = JSON.parse(JSON.stringify(originalFeatures));
+                if (offset !== 0) {
+                    copies.forEach(f => shiftFeature(f, offset));
+                }
+                let newData = Object.assign({}, baseGeoJsonData);
+                newData.features = copies;
+
+                let layer = L.geoJson(newData, {
+                    style: style,
+                    onEachFeature: onEachFeature
+                });
+                worldLayers[w] = layer;
+                geoJsonLayer.addLayer(layer);
+            }
+        });
+    }
+
+    updateGeoJsonWorlds();
+    map.on('move', updateGeoJsonWorlds);
 
     loadCrimeData('');
-
-    geoJsonLayer = L.geoJson(geoJsonData, {
-        style: style,
-        onEachFeature: onEachFeature
-    }).addTo(map);
 
     updateLegend();
 
@@ -253,7 +304,8 @@ function highlightFeature(e) {
 }
 
 function resetHighlight(e) {
-    geoJsonLayer.resetStyle(e.target);
+    var layer = e.target;
+    layer.setStyle(style(layer.feature));
     info.update();
 }
 

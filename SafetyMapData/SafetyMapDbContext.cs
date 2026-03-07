@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SafetyMapData
 {
-    public class SafetyMapDbContext : IdentityDbContext<UserIdentity>  //TUKA CHATA POMAGA ;)
+    public class SafetyMapDbContext : IdentityDbContext<UserIdentity> 
     {
         public SafetyMapDbContext(DbContextOptions<SafetyMapDbContext> options)
         : base(options)

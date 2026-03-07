@@ -102,3 +102,6 @@ node_modules/
 
 # Log files
 *.log
+
+# Local SDK and NuGet cache
+.dotnet/
