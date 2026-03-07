@@ -72,5 +72,16 @@ namespace SafetyMap.Core.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<int>> GetAvailableYearsAsync()
+        {
+            return await _context.Cities
+                .SelectMany(c => c.Neighborhoods)
+                .SelectMany(n => n.CrimeStatistics)
+                .Select(cs => cs.Year)
+                .Distinct()
+                .OrderBy(y => y)
+                .ToListAsync();
+        }
     }
 }

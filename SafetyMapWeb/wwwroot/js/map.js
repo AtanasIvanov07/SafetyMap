@@ -13,6 +13,7 @@ var categoryColors = {};
 var geoJsonLayer;
 var geoJsonData;
 var legendControl;
+var availableYears = [];
 
 var currentView = 'population';
 var currentMode = 'view';
@@ -51,8 +52,9 @@ info.addTo(map);
 Promise.all([
     fetch('/Map/GetPopulationData').then(r => r.json()),
     fetch('/Map/GetCrimeCategories').then(r => r.json()),
-    fetch('/bg.json').then(r => r.json())
-]).then(([popData, categories, geoJson]) => {
+    fetch('/bg.json').then(r => r.json()),
+    fetch('/Map/GetAvailableYears').then(r => r.json())
+]).then(([popData, categories, geoJson, yearsData]) => {
 
     popData.forEach(item => {
         populationData[item.name] = item.population;
@@ -130,6 +132,32 @@ Promise.all([
     updateGeoJsonWorlds();
     map.on('move', updateGeoJsonWorlds);
 
+    availableYears = yearsData.sort((a, b) => a - b);
+    if (availableYears.length > 0) {
+        let slider = document.getElementById('yearSlider');
+        slider.min = 0;
+        slider.max = availableYears.length - 1;
+        slider.value = availableYears.length - 1;
+
+        let labelsContainer = document.getElementById('yearSliderLabels');
+        if (labelsContainer) {
+            labelsContainer.innerHTML = '';
+            availableYears.forEach(y => {
+                let span = document.createElement('span');
+                span.textContent = y;
+                labelsContainer.appendChild(span);
+            });
+        }
+        document.getElementById('yearLabel').innerText = 'Year: ' + availableYears[availableYears.length - 1];
+    }
+
+    // Disable Leaflet drag propagation on controls so slider works properly
+    var controlsDiv = document.getElementById('controls');
+    if (controlsDiv) {
+        L.DomEvent.disableClickPropagation(controlsDiv);
+        L.DomEvent.disableScrollPropagation(controlsDiv);
+    }
+
     loadCrimeData('');
 
     updateLegend();
@@ -143,8 +171,9 @@ function loadCrimeData(categoryId) {
     if (categoryId) params.push('categoryId=' + categoryId);
 
     let yearEnabled = document.getElementById('enableYearFilter').checked;
-    if (yearEnabled) {
-        let year = document.getElementById('yearSlider').value;
+    if (yearEnabled && availableYears.length > 0) {
+        let yearIndex = document.getElementById('yearSlider').value;
+        let year = availableYears[yearIndex];
         params.push('year=' + year);
     }
 
@@ -406,7 +435,12 @@ document.getElementById('enableYearFilter').addEventListener('change', function 
 
     // Update map title based on state
     if (currentView === 'crime') {
-        let title = this.checked ? `Bulgaria Crime Statistics (${document.getElementById('yearSlider').value})` : 'Bulgaria Crime Statistics (All Time)';
+        let yearTitle = 'All Time';
+        if (this.checked && availableYears.length > 0) {
+            let yearIndex = document.getElementById('yearSlider').value;
+            yearTitle = availableYears[yearIndex];
+        }
+        let title = this.checked ? `Bulgaria Crime Statistics (${yearTitle})` : 'Bulgaria Crime Statistics (All Time)';
         document.getElementById('mapTitle').innerText = title;
 
         var categoryId = document.getElementById('crimeCategorySelect').value;
@@ -415,9 +449,12 @@ document.getElementById('enableYearFilter').addEventListener('change', function 
 });
 
 document.getElementById('yearSlider').addEventListener('input', function (e) {
-    document.getElementById('yearLabel').innerText = 'Year: ' + this.value;
-    if (currentView === 'crime' && document.getElementById('enableYearFilter').checked) {
-        document.getElementById('mapTitle').innerText = `Bulgaria Crime Statistics (${this.value})`;
+    if (availableYears.length > 0) {
+        let year = availableYears[this.value];
+        document.getElementById('yearLabel').innerText = 'Year: ' + year;
+        if (currentView === 'crime' && document.getElementById('enableYearFilter').checked) {
+            document.getElementById('mapTitle').innerText = `Bulgaria Crime Statistics (${year})`;
+        }
     }
 });
 

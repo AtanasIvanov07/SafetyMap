@@ -8,5 +8,6 @@ namespace SafetyMap.Core.Contracts
         Task<IEnumerable<CityDTO>> GetPopulationDataAsync();
         Task<IEnumerable<CityCrimeDto>> GetCrimeDataAsync(Guid? categoryId, int? year = null);
         Task<IEnumerable<CrimeCategoryDTO>> GetCrimeCategoriesAsync();
+        Task<IEnumerable<int>> GetAvailableYearsAsync();
     }
 }

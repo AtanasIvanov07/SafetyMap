@@ -50,5 +50,13 @@ namespace SafetyMapWeb.Controllers
             var categories = await _mapService.GetCrimeCategoriesAsync();
             return Json(categories);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> GetAvailableYears()
+        {
+            var years = await _mapService.GetAvailableYearsAsync();
+            return Json(years);
+        }
     }
 }
