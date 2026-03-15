@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
+using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs.CrimeStatistic;
 using SafetyMap.Core.Services;
 using SafetyMapData;
@@ -14,6 +16,7 @@ namespace SafetyMap.Core.Tests.Services
     public class CrimeStatisticServiceTests
     {
         private SafetyMapDbContext _context;
+        private Mock<IEmailQueueService> _mockEmailQueueService;
         private CrimeStatisticService _crimeStatisticService;
 
         private Guid _neighborhood1Id;
@@ -30,7 +33,8 @@ namespace SafetyMap.Core.Tests.Services
                 .Options;
 
             _context = new SafetyMapDbContext(options);
-            _crimeStatisticService = new CrimeStatisticService(_context);
+            _mockEmailQueueService = new Mock<IEmailQueueService>();
+            _crimeStatisticService = new CrimeStatisticService(_context, _mockEmailQueueService.Object);
 
             _neighborhood1Id = Guid.NewGuid();
             _neighborhood2Id = Guid.NewGuid();

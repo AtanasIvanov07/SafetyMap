@@ -54,6 +54,9 @@ builder.Services.AddScoped<ICrimeStatisticService, CrimeStatisticService>();
 builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
 builder.Services.AddScoped<IMapService, MapService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddSingleton<IEmailQueueService, EmailQueueService>();
+builder.Services.AddHostedService<EmailBackgroundService>();
 
 builder.Services.AddControllersWithViews();
 

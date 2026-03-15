@@ -35,9 +35,7 @@ namespace SafetyMapWeb.Seeding.Seeders
 
             if (await context.CrimeStatistics.AnyAsync())
             {
-                var allStats = await context.CrimeStatistics.ToListAsync();
-                context.CrimeStatistics.RemoveRange(allStats);
-                await context.SaveChangesAsync();
+                return;
             }
 
         

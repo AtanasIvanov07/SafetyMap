@@ -9,10 +9,12 @@ namespace SafetyMap.Core.Services
     public class CrimeStatisticService : ICrimeStatisticService
     {
         private readonly SafetyMapDbContext _context;
+        private readonly IEmailQueueService _emailQueueService;
 
-        public CrimeStatisticService(SafetyMapDbContext context)
+        public CrimeStatisticService(SafetyMapDbContext context, IEmailQueueService emailQueueService)
         {
             _context = context;
+            _emailQueueService = emailQueueService;
         }
 
         public async Task<(IEnumerable<CrimeStatisticDTO> Statistics, int TotalCount)> GetAllAsync(string? neighborhoodSearch = null, string? categorySearch = null, int? year = null, int currentPage = 1, int itemsPerPage = 20)
@@ -128,6 +130,35 @@ namespace SafetyMap.Core.Services
 
             _context.CrimeStatistics.Add(crimeStatistic);
             await _context.SaveChangesAsync();
+
+          
+            var subscribedUsersEmailQuery = from us in _context.UserSubscriptions
+                                            join u in _context.ApplicationUsers on us.UserId equals u.Id
+                                            where us.NeighborhoodId == dto.NeighborhoodId
+                                            select u.Email;
+
+            var userEmails = await subscribedUsersEmailQuery.ToListAsync();
+
+            if (userEmails.Any())
+            {
+                var neighborhoodName = await _context.Neighborhoods
+                    .Where(n => n.Id == dto.NeighborhoodId)
+                    .Select(n => n.Name)
+                    .FirstOrDefaultAsync() ?? "a neighborhood";
+
+                foreach (var email in userEmails)
+                {
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        await _emailQueueService.QueueEmailAsync(new SafetyMap.Core.DTOs.Email.EmailPayload
+                        {
+                            ToEmail = email,
+                            Subject = "New Safety Alert",
+                            HtmlMessage = $"New safety activity has been reported in {neighborhoodName}, a neighborhood you are subscribed to."
+                        });
+                    }
+                }
+            }
         }
 
         public async Task UpdateAsync(CrimeStatisticEditDTO dto)
