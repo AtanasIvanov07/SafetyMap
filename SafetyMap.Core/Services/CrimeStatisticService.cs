@@ -118,6 +118,8 @@ namespace SafetyMap.Core.Services
 
         public async Task CreateAsync(CrimeStatisticCreateDTO dto)
         {
+            var trend = await CalculateTrendAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year, dto.CountOfCrimes);
+
             var crimeStatistic = new CrimeStatistic
             {
                 Id = Guid.NewGuid(),
@@ -125,10 +127,26 @@ namespace SafetyMap.Core.Services
                 CrimeCategoryId = dto.CrimeCategoryId,
                 CountOfCrimes = dto.CountOfCrimes,
                 Year = dto.Year,
-                TrendPercentage = dto.TrendPercentage
+                TrendPercentage = trend
             };
 
             _context.CrimeStatistics.Add(crimeStatistic);
+
+            var nextYearStat = await _context.CrimeStatistics
+                .FirstOrDefaultAsync(c => c.NeighborhoodId == dto.NeighborhoodId && c.CrimeCategoryId == dto.CrimeCategoryId && c.Year == dto.Year + 1);
+
+            if (nextYearStat != null)
+            {
+                if (dto.CountOfCrimes > 0)
+                {
+                    nextYearStat.TrendPercentage = Math.Round(((double)(nextYearStat.CountOfCrimes - dto.CountOfCrimes) / dto.CountOfCrimes) * 100, 2);
+                }
+                else
+                {
+                    nextYearStat.TrendPercentage = 0;
+                }
+            }
+
             await _context.SaveChangesAsync();
 
           
@@ -170,11 +188,54 @@ namespace SafetyMap.Core.Services
                 throw new ArgumentException($"CrimeStatistic with Id '{dto.Id}' was not found.");
             }
 
+            var oldNeighborhoodId = crimeStatistic.NeighborhoodId;
+            var oldCategoryId = crimeStatistic.CrimeCategoryId;
+            var oldYear = crimeStatistic.Year;
+
             crimeStatistic.NeighborhoodId = dto.NeighborhoodId;
             crimeStatistic.CrimeCategoryId = dto.CrimeCategoryId;
             crimeStatistic.CountOfCrimes = dto.CountOfCrimes;
             crimeStatistic.Year = dto.Year;
-            crimeStatistic.TrendPercentage = dto.TrendPercentage;
+
+            crimeStatistic.TrendPercentage = await CalculateTrendAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year, dto.CountOfCrimes);
+
+            var newNextYearStat = await _context.CrimeStatistics
+                .FirstOrDefaultAsync(c => c.NeighborhoodId == dto.NeighborhoodId && c.CrimeCategoryId == dto.CrimeCategoryId && c.Year == dto.Year + 1 && c.Id != dto.Id);
+
+            if (newNextYearStat != null)
+            {
+                if (dto.CountOfCrimes > 0)
+                {
+                    newNextYearStat.TrendPercentage = Math.Round(((double)(newNextYearStat.CountOfCrimes - dto.CountOfCrimes) / dto.CountOfCrimes) * 100, 2);
+                }
+                else
+                {
+                    newNextYearStat.TrendPercentage = 0;
+                }
+            }
+
+            if (oldNeighborhoodId != dto.NeighborhoodId || oldCategoryId != dto.CrimeCategoryId || oldYear != dto.Year)
+            {
+                var oldNextYearStat = await _context.CrimeStatistics
+                    .FirstOrDefaultAsync(c => c.NeighborhoodId == oldNeighborhoodId && c.CrimeCategoryId == oldCategoryId && c.Year == oldYear + 1 && c.Id != dto.Id);
+
+                if (oldNextYearStat != null)
+                {
+                    var oldNextYearPrev = await _context.CrimeStatistics
+                        .Where(c => c.NeighborhoodId == oldNeighborhoodId && c.CrimeCategoryId == oldCategoryId && c.Year == oldYear && c.Id != dto.Id)
+                        .Select(c => (int?)c.CountOfCrimes)
+                        .FirstOrDefaultAsync();
+
+                    if (oldNextYearPrev.HasValue && oldNextYearPrev.Value > 0)
+                    {
+                        oldNextYearStat.TrendPercentage = Math.Round(((double)(oldNextYearStat.CountOfCrimes - oldNextYearPrev.Value) / oldNextYearPrev.Value) * 100, 2);
+                    }
+                    else
+                    {
+                        oldNextYearStat.TrendPercentage = 0;
+                    }
+                }
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -185,6 +246,26 @@ namespace SafetyMap.Core.Services
 
             if (crimeStatistic != null)
             {
+                var nextYearStat = await _context.CrimeStatistics
+                    .FirstOrDefaultAsync(c => c.NeighborhoodId == crimeStatistic.NeighborhoodId && c.CrimeCategoryId == crimeStatistic.CrimeCategoryId && c.Year == crimeStatistic.Year + 1);
+
+                if (nextYearStat != null)
+                {
+                    var prevCount = await _context.CrimeStatistics
+                        .Where(c => c.NeighborhoodId == crimeStatistic.NeighborhoodId && c.CrimeCategoryId == crimeStatistic.CrimeCategoryId && c.Year == crimeStatistic.Year && c.Id != id)
+                        .Select(c => (int?)c.CountOfCrimes)
+                        .FirstOrDefaultAsync();
+
+                    if (prevCount.HasValue && prevCount.Value > 0)
+                    {
+                        nextYearStat.TrendPercentage = Math.Round(((double)(nextYearStat.CountOfCrimes - prevCount.Value) / prevCount.Value) * 100, 2);
+                    }
+                    else
+                    {
+                        nextYearStat.TrendPercentage = 0;
+                    }
+                }
+
                 _context.CrimeStatistics.Remove(crimeStatistic);
                 await _context.SaveChangesAsync();
             }
@@ -202,6 +283,20 @@ namespace SafetyMap.Core.Services
             return await _context.CrimeCategories
                 .Select(c => new KeyValuePair<string, string>(c.Id.ToString(), c.Name))
                 .ToListAsync();
+        }
+
+        private async Task<double> CalculateTrendAsync(Guid neighborhoodId, Guid categoryId, int year, int countOfCrimes)
+        {
+            var prevCount = await _context.CrimeStatistics
+                .Where(c => c.NeighborhoodId == neighborhoodId && c.CrimeCategoryId == categoryId && c.Year == year - 1)
+                .Select(c => (int?)c.CountOfCrimes)
+                .FirstOrDefaultAsync();
+
+            if (prevCount.HasValue && prevCount.Value > 0)
+            {
+                return Math.Round(((double)(countOfCrimes - prevCount.Value) / prevCount.Value) * 100, 2);
+            }
+            return 0;
         }
     }
 }
