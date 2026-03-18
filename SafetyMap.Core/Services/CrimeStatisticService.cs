@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs.CrimeStatistic;
+using SafetyMap.Core.DTOs.Email;
 using SafetyMapData;
 using SafetyMapData.Entities;
+using System.Linq.Expressions;
 
 namespace SafetyMap.Core.Services
 {
@@ -10,6 +12,21 @@ namespace SafetyMap.Core.Services
     {
         private readonly SafetyMapDbContext _context;
         private readonly IEmailQueueService _emailQueueService;
+
+        private const string NotAvailable = "N/A";
+        private const string EmailSubject = "New Safety Alert";
+
+        private static readonly Expression<Func<CrimeStatistic, CrimeStatisticDTO>> MapToDto = c => new CrimeStatisticDTO
+        {
+            Id = c.Id,
+            NeighborhoodId = c.NeighborhoodId,
+            NeighborhoodName = c.Neighborhood != null ? c.Neighborhood.Name : NotAvailable,
+            CrimeCategoryId = c.CrimeCategoryId,
+            CrimeCategoryName = c.CrimeCategory != null ? c.CrimeCategory.Name : NotAvailable,
+            CountOfCrimes = c.CountOfCrimes,
+            Year = c.Year,
+            TrendPercentage = c.TrendPercentage
+        };
 
         public CrimeStatisticService(SafetyMapDbContext context, IEmailQueueService emailQueueService)
         {
@@ -26,14 +43,12 @@ namespace SafetyMap.Core.Services
 
             if (!string.IsNullOrWhiteSpace(neighborhoodSearch))
             {
-                var lowerSearch = neighborhoodSearch.ToLower();
-                query = query.Where(c => c.Neighborhood != null && c.Neighborhood.Name.ToLower().Contains(lowerSearch));
+                query = query.Where(c => c.Neighborhood != null && c.Neighborhood.Name.Contains(neighborhoodSearch));
             }
 
             if (!string.IsNullOrWhiteSpace(categorySearch))
             {
-                var lowerSearch = categorySearch.ToLower();
-                query = query.Where(c => c.CrimeCategory != null && c.CrimeCategory.Name.ToLower().Contains(lowerSearch));
+                query = query.Where(c => c.CrimeCategory != null && c.CrimeCategory.Name.Contains(categorySearch));
             }
 
             if (year.HasValue)
@@ -48,17 +63,7 @@ namespace SafetyMap.Core.Services
                 .ThenBy(c => c.Neighborhood.Name)
                 .Skip((currentPage - 1) * itemsPerPage)
                 .Take(itemsPerPage)
-                .Select(c => new CrimeStatisticDTO
-                {
-                    Id = c.Id,
-                    NeighborhoodId = c.NeighborhoodId,
-                    NeighborhoodName = c.Neighborhood != null ? c.Neighborhood.Name : "N/A",
-                    CrimeCategoryId = c.CrimeCategoryId,
-                    CrimeCategoryName = c.CrimeCategory != null ? c.CrimeCategory.Name : "N/A",
-                    CountOfCrimes = c.CountOfCrimes,
-                    Year = c.Year,
-                    TrendPercentage = c.TrendPercentage
-                })
+                .Select(MapToDto)
                 .ToListAsync();
 
             return (statistics, totalCount);
@@ -66,33 +71,13 @@ namespace SafetyMap.Core.Services
 
         public async Task<IEnumerable<CrimeStatisticDTO>> GetUserSubscribedStatisticsAsync(string userId)
         {
-            var userSubscribedNeighborhoodIds = await _context.UserSubscriptions
-                .Where(us => us.UserId == userId)
-                .Select(us => us.NeighborhoodId)
-                .ToListAsync();
-
-            if (!userSubscribedNeighborhoodIds.Any())
-            {
-                return new List<CrimeStatisticDTO>();
-            }
-
             return await _context.CrimeStatistics
                 .Include(c => c.Neighborhood)
                 .Include(c => c.CrimeCategory)
-                .Where(c => userSubscribedNeighborhoodIds.Contains(c.NeighborhoodId))
+                .Where(c => _context.UserSubscriptions.Any(us => us.UserId == userId && us.NeighborhoodId == c.NeighborhoodId))
                 .OrderByDescending(c => c.Year)
                 .ThenBy(c => c.Neighborhood.Name)
-                .Select(c => new CrimeStatisticDTO
-                {
-                    Id = c.Id,
-                    NeighborhoodId = c.NeighborhoodId,
-                    NeighborhoodName = c.Neighborhood != null ? c.Neighborhood.Name : "N/A",
-                    CrimeCategoryId = c.CrimeCategoryId,
-                    CrimeCategoryName = c.CrimeCategory != null ? c.CrimeCategory.Name : "N/A",
-                    CountOfCrimes = c.CountOfCrimes,
-                    Year = c.Year,
-                    TrendPercentage = c.TrendPercentage
-                })
+                .Select(MapToDto)
                 .ToListAsync();
         }
 
@@ -102,24 +87,12 @@ namespace SafetyMap.Core.Services
                 .Include(c => c.Neighborhood)
                 .Include(c => c.CrimeCategory)
                 .Where(c => c.Id == id)
-                .Select(c => new CrimeStatisticDTO
-                {
-                    Id = c.Id,
-                    NeighborhoodId = c.NeighborhoodId,
-                    NeighborhoodName = c.Neighborhood != null ? c.Neighborhood.Name : "N/A",
-                    CrimeCategoryId = c.CrimeCategoryId,
-                    CrimeCategoryName = c.CrimeCategory != null ? c.CrimeCategory.Name : "N/A",
-                    CountOfCrimes = c.CountOfCrimes,
-                    Year = c.Year,
-                    TrendPercentage = c.TrendPercentage
-                })
+                .Select(MapToDto)
                 .FirstOrDefaultAsync();
         }
 
         public async Task CreateAsync(CrimeStatisticCreateDTO dto)
         {
-            var trend = await CalculateTrendAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year, dto.CountOfCrimes);
-
             var crimeStatistic = new CrimeStatistic
             {
                 Id = Guid.NewGuid(),
@@ -127,56 +100,17 @@ namespace SafetyMap.Core.Services
                 CrimeCategoryId = dto.CrimeCategoryId,
                 CountOfCrimes = dto.CountOfCrimes,
                 Year = dto.Year,
-                TrendPercentage = trend
+                TrendPercentage = 0
             };
 
             _context.CrimeStatistics.Add(crimeStatistic);
-
-            var nextYearStat = await _context.CrimeStatistics
-                .FirstOrDefaultAsync(c => c.NeighborhoodId == dto.NeighborhoodId && c.CrimeCategoryId == dto.CrimeCategoryId && c.Year == dto.Year + 1);
-
-            if (nextYearStat != null)
-            {
-                if (dto.CountOfCrimes > 0)
-                {
-                    nextYearStat.TrendPercentage = Math.Round(((double)(nextYearStat.CountOfCrimes - dto.CountOfCrimes) / dto.CountOfCrimes) * 100, 2);
-                }
-                else
-                {
-                    nextYearStat.TrendPercentage = 0;
-                }
-            }
-
             await _context.SaveChangesAsync();
 
-          
-            var subscribedUsersEmailQuery = from us in _context.UserSubscriptions
-                                            join u in _context.ApplicationUsers on us.UserId equals u.Id
-                                            where us.NeighborhoodId == dto.NeighborhoodId
-                                            select u.Email;
+            await UpdateTrendForYearAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year);
+            await UpdateTrendForYearAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year + 1);
+            await _context.SaveChangesAsync();
 
-            var userEmails = await subscribedUsersEmailQuery.ToListAsync();
-
-            if (userEmails.Any())
-            {
-                var neighborhoodName = await _context.Neighborhoods
-                    .Where(n => n.Id == dto.NeighborhoodId)
-                    .Select(n => n.Name)
-                    .FirstOrDefaultAsync() ?? "a neighborhood";
-
-                foreach (var email in userEmails)
-                {
-                    if (!string.IsNullOrEmpty(email))
-                    {
-                        await _emailQueueService.QueueEmailAsync(new SafetyMap.Core.DTOs.Email.EmailPayload
-                        {
-                            ToEmail = email,
-                            Subject = "New Safety Alert",
-                            HtmlMessage = $"New safety activity has been reported in {neighborhoodName}, a neighborhood you are subscribed to."
-                        });
-                    }
-                }
-            }
+            await NotifySubscribersAsync(dto.NeighborhoodId);
         }
 
         public async Task UpdateAsync(CrimeStatisticEditDTO dto)
@@ -197,44 +131,14 @@ namespace SafetyMap.Core.Services
             crimeStatistic.CountOfCrimes = dto.CountOfCrimes;
             crimeStatistic.Year = dto.Year;
 
-            crimeStatistic.TrendPercentage = await CalculateTrendAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year, dto.CountOfCrimes);
+            await _context.SaveChangesAsync();
 
-            var newNextYearStat = await _context.CrimeStatistics
-                .FirstOrDefaultAsync(c => c.NeighborhoodId == dto.NeighborhoodId && c.CrimeCategoryId == dto.CrimeCategoryId && c.Year == dto.Year + 1 && c.Id != dto.Id);
-
-            if (newNextYearStat != null)
-            {
-                if (dto.CountOfCrimes > 0)
-                {
-                    newNextYearStat.TrendPercentage = Math.Round(((double)(newNextYearStat.CountOfCrimes - dto.CountOfCrimes) / dto.CountOfCrimes) * 100, 2);
-                }
-                else
-                {
-                    newNextYearStat.TrendPercentage = 0;
-                }
-            }
+            await UpdateTrendForYearAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year);
+            await UpdateTrendForYearAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year + 1);
 
             if (oldNeighborhoodId != dto.NeighborhoodId || oldCategoryId != dto.CrimeCategoryId || oldYear != dto.Year)
             {
-                var oldNextYearStat = await _context.CrimeStatistics
-                    .FirstOrDefaultAsync(c => c.NeighborhoodId == oldNeighborhoodId && c.CrimeCategoryId == oldCategoryId && c.Year == oldYear + 1 && c.Id != dto.Id);
-
-                if (oldNextYearStat != null)
-                {
-                    var oldNextYearPrev = await _context.CrimeStatistics
-                        .Where(c => c.NeighborhoodId == oldNeighborhoodId && c.CrimeCategoryId == oldCategoryId && c.Year == oldYear && c.Id != dto.Id)
-                        .Select(c => (int?)c.CountOfCrimes)
-                        .FirstOrDefaultAsync();
-
-                    if (oldNextYearPrev.HasValue && oldNextYearPrev.Value > 0)
-                    {
-                        oldNextYearStat.TrendPercentage = Math.Round(((double)(oldNextYearStat.CountOfCrimes - oldNextYearPrev.Value) / oldNextYearPrev.Value) * 100, 2);
-                    }
-                    else
-                    {
-                        oldNextYearStat.TrendPercentage = 0;
-                    }
-                }
+                await UpdateTrendForYearAsync(oldNeighborhoodId, oldCategoryId, oldYear + 1);
             }
 
             await _context.SaveChangesAsync();
@@ -246,27 +150,14 @@ namespace SafetyMap.Core.Services
 
             if (crimeStatistic != null)
             {
-                var nextYearStat = await _context.CrimeStatistics
-                    .FirstOrDefaultAsync(c => c.NeighborhoodId == crimeStatistic.NeighborhoodId && c.CrimeCategoryId == crimeStatistic.CrimeCategoryId && c.Year == crimeStatistic.Year + 1);
-
-                if (nextYearStat != null)
-                {
-                    var prevCount = await _context.CrimeStatistics
-                        .Where(c => c.NeighborhoodId == crimeStatistic.NeighborhoodId && c.CrimeCategoryId == crimeStatistic.CrimeCategoryId && c.Year == crimeStatistic.Year && c.Id != id)
-                        .Select(c => (int?)c.CountOfCrimes)
-                        .FirstOrDefaultAsync();
-
-                    if (prevCount.HasValue && prevCount.Value > 0)
-                    {
-                        nextYearStat.TrendPercentage = Math.Round(((double)(nextYearStat.CountOfCrimes - prevCount.Value) / prevCount.Value) * 100, 2);
-                    }
-                    else
-                    {
-                        nextYearStat.TrendPercentage = 0;
-                    }
-                }
+                var neighborhoodId = crimeStatistic.NeighborhoodId;
+                var categoryId = crimeStatistic.CrimeCategoryId;
+                var year = crimeStatistic.Year;
 
                 _context.CrimeStatistics.Remove(crimeStatistic);
+                await _context.SaveChangesAsync();
+
+                await UpdateTrendForYearAsync(neighborhoodId, categoryId, year + 1);
                 await _context.SaveChangesAsync();
             }
         }
@@ -285,18 +176,54 @@ namespace SafetyMap.Core.Services
                 .ToListAsync();
         }
 
-        private async Task<double> CalculateTrendAsync(Guid neighborhoodId, Guid categoryId, int year, int countOfCrimes)
+        private async Task UpdateTrendForYearAsync(Guid neighborhoodId, Guid categoryId, int targetYear)
         {
+            var targetStat = await _context.CrimeStatistics
+                .FirstOrDefaultAsync(c => c.NeighborhoodId == neighborhoodId && c.CrimeCategoryId == categoryId && c.Year == targetYear);
+
+            if (targetStat == null) return;
+
             var prevCount = await _context.CrimeStatistics
-                .Where(c => c.NeighborhoodId == neighborhoodId && c.CrimeCategoryId == categoryId && c.Year == year - 1)
+                .Where(c => c.NeighborhoodId == neighborhoodId && c.CrimeCategoryId == categoryId && c.Year == targetYear - 1)
                 .Select(c => (int?)c.CountOfCrimes)
                 .FirstOrDefaultAsync();
 
             if (prevCount.HasValue && prevCount.Value > 0)
             {
-                return Math.Round(((double)(countOfCrimes - prevCount.Value) / prevCount.Value) * 100, 2);
+                targetStat.TrendPercentage = Math.Round(((double)(targetStat.CountOfCrimes - prevCount.Value) / prevCount.Value) * 100, 2);
             }
-            return 0;
+            else
+            {
+                targetStat.TrendPercentage = 0;
+            }
+        }
+
+        private async Task NotifySubscribersAsync(Guid neighborhoodId)
+        {
+            var subscribedUsersEmailQuery = from us in _context.UserSubscriptions
+                                            join u in _context.ApplicationUsers on us.UserId equals u.Id
+                                            where us.NeighborhoodId == neighborhoodId
+                                            select u.Email;
+
+            var userEmails = await subscribedUsersEmailQuery.ToListAsync();
+
+            if (userEmails.Any())
+            {
+                var neighborhoodName = await _context.Neighborhoods
+                    .Where(n => n.Id == neighborhoodId)
+                    .Select(n => n.Name)
+                    .FirstOrDefaultAsync() ?? "a neighborhood";
+
+                foreach (var email in userEmails.Where(e => !string.IsNullOrEmpty(e)))
+                {
+                    await _emailQueueService.QueueEmailAsync(new EmailPayload
+                    {
+                        ToEmail = email,
+                        Subject = EmailSubject,
+                        HtmlMessage = $"New safety activity has been reported in {neighborhoodName}, a neighborhood you are subscribed to."
+                    });
+                }
+            }
         }
     }
 }
