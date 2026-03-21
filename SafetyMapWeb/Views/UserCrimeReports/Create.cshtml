@@ -1,0 +1,104 @@
+@model SafetyMapWeb.Models.UserCrimeReports.UserCrimeReportViewModel
+
+@{
+    ViewData["Title"] = "Submit a Crime Report";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-light"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Submit a Crime Report</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="dashboard-card border-top border-primary border-3">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="CityId" class="form-label text-light fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-buildings"></i></span>
+                        <select asp-for="CityId" asp-items="Model.Cities" class="form-select form-select-lg">
+                            <option value="">-- Select City --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="CityId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NeighborhoodId" class="form-label text-light fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-pin-map"></i></span>
+                        <select asp-for="NeighborhoodId" asp-items="Model.Neighborhoods" class="form-select form-select-lg">
+                            <option value="">-- Select Neighborhood (Optional) --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="NeighborhoodId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CrimeCategoryId" class="form-label text-light fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-tags"></i></span>
+                        <select asp-for="CrimeCategoryId" asp-items="Model.CrimeCategories" class="form-select form-select-lg">
+                            <option value="">-- Select Crime Category --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="CrimeCategoryId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DateOfIncident" class="form-label text-light fw-semibold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-calendar-date"></i></span>
+                        <input asp-for="DateOfIncident" class="form-control form-control-lg" type="date" />
+                    </div>
+                    <span asp-validation-for="DateOfIncident" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label text-light fw-semibold"></label>
+                    <textarea asp-for="Description" class="form-control form-control-lg" rows="4" placeholder="Describe the incident details..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary px-4 py-2 text-light fw-bold">
+                        <i class="bi bi-send-fill me-1"></i> Submit Report
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-dark px-4 py-2">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            var cityDropdown = $('#CityId');
+            var neighborhoodDropdown = $('#NeighborhoodId');
+
+            cityDropdown.change(function () {
+                var cityId = $(this).val();
+                
+                neighborhoodDropdown.empty();
+                neighborhoodDropdown.append($('<option></option>').val('').html('-- Select Neighborhood (Optional) --'));
+
+                if (cityId) {
+                    $.getJSON('/UserCrimeReports/GetNeighborhoodsByCity', { cityId: cityId }, function (data) {
+                        $.each(data, function (index, item) {
+                            neighborhoodDropdown.append(
+                                $('<option></option>').val(item.id).html(item.name)
+                            );
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -23,6 +23,7 @@ namespace SafetyMapData
         public DbSet<CrimeStatistic> CrimeStatistics { get; set; }
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
         public DbSet<UserIdentity> ApplicationUsers { get; set; }
+        public DbSet<UserCrimeReport> UserCrimeReports { get; set; }
         // 2. Configure relationships and rules
         protected override void OnModelCreating(ModelBuilder builder)
         {
