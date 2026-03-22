@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SafetyMap.Core.DTOs;
+using SafetyMap.Core.DTOs.UserCrimeReport;
 
 namespace SafetyMap.Core.Contracts
 {

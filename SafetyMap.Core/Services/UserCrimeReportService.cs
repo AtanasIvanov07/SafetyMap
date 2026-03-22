@@ -8,6 +8,7 @@ using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs;
 using SafetyMap.Core.DTOs.CrimeStatistic;
 using SafetyMap.Core.DTOs.Email;
+using SafetyMap.Core.DTOs.UserCrimeReport;
 using SafetyMapData;
 using SafetyMapData.Entities;
 using SafetyMapData.Enums;

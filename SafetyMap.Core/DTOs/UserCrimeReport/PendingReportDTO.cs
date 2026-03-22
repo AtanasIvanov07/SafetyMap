@@ -1,6 +1,6 @@
 using System;
 
-namespace SafetyMap.Core.DTOs
+namespace SafetyMap.Core.DTOs.UserCrimeReport
 {
     public class PendingReportDTO
     {

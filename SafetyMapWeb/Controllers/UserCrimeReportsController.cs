@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs;
 using SafetyMap.Core.DTOs.Neighborhood;
+using SafetyMap.Core.DTOs.UserCrimeReport;
 using SafetyMapWeb.Models.UserCrimeReports;
 
 namespace SafetyMapWeb.Controllers

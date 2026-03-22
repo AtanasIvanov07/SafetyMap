@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace SafetyMap.Core.DTOs
+namespace SafetyMap.Core.DTOs.UserCrimeReport
 {
     public class UserCrimeReportCreateDTO
     {
