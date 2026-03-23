@@ -61,11 +61,11 @@
                                 <div>@report.CityName</div>
                                 @if (!string.IsNullOrEmpty(report.NeighborhoodName))
                                 {
-                                    <small class="text-secondary">@report.NeighborhoodName</small>
+                                    <small class="text-light">@report.NeighborhoodName</small>
                                 }
                                 else
                                 {
-                                    <small class="text-secondary fst-italic">No neighborhood</small>
+                                    <small class="text-light opacity-75 fst-italic">No neighborhood</small>
                                 }
                             </td>
                             <td><span class="badge bg-primary">@report.CrimeCategoryName</span></td>
