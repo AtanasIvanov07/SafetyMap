@@ -49,30 +49,7 @@ namespace SafetyMapWeb.Controllers
             return View(city);
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create()
-        {
-            return View();
-        }
 
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(CityCreateViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var dto = new CityCreateDTO
-                {
-                    Name = model.Name,
-                    Population = model.Population
-                };
-
-                await _cityService.CreateAsync(dto);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(model);
-        }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -123,32 +100,7 @@ namespace SafetyMapWeb.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var city = await _cityService.GetByIdAsync(id.Value);
-            if (city == null)
-            {
-                return NotFound();
-            }
-
-            return View(city);
-        }
-
-
-        [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            await _cityService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
 
 
     }

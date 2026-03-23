@@ -80,36 +80,7 @@ namespace SafetyMapWeb.Tests.Controllers
             Assert.That(result!.Model, Is.EqualTo(city));
         }
 
-        [Test]
-        public async Task Create_Get_ShouldReturnView()
-        {
-            var result = await _controller.Create() as ViewResult;
-            Assert.That(result, Is.Not.Null);
-        }
 
-        [Test]
-        public async Task Create_Post_ShouldReturnView_WhenModelStateIsInvalid()
-        {
-            _controller.ModelState.AddModelError("Error", "Invalid");
-            var model = new CityCreateViewModel();
-
-            var result = await _controller.Create(model) as ViewResult;
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result!.Model, Is.EqualTo(model));
-        }
-
-        [Test]
-        public async Task Create_Post_ShouldRedirectToIndex_WhenValid()
-        {
-            var model = new CityCreateViewModel { Name = "New City", Population = 1000 };
-
-            var result = await _controller.Create(model) as RedirectToActionResult;
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result!.ActionName, Is.EqualTo("Index"));
-            _cityServiceMock.Verify(s => s.CreateAsync(It.IsAny<CityCreateDTO>()), Times.Once);
-        }
 
         [Test]
         public async Task Edit_Get_ShouldReturnNotFound_WhenIdIsNull()
@@ -179,46 +150,6 @@ namespace SafetyMapWeb.Tests.Controllers
             _cityServiceMock.Verify(s => s.UpdateAsync(It.IsAny<CityEditDTO>()), Times.Once);
         }
 
-        [Test]
-        public async Task Delete_Get_ShouldReturnNotFound_WhenIdIsNull()
-        {
-            var result = await _controller.Delete(null) as NotFoundResult;
-            Assert.That(result, Is.Not.Null);
-        }
 
-        [Test]
-        public async Task Delete_Get_ShouldReturnNotFound_WhenCityDoesNotExist()
-        {
-            _cityServiceMock.Setup(s => s.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((CityDTO)null!);
-
-            var result = await _controller.Delete(Guid.NewGuid()) as NotFoundResult;
-
-            Assert.That(result, Is.Not.Null);
-        }
-
-        [Test]
-        public async Task Delete_Get_ShouldReturnViewWithCity_WhenCityExists()
-        {
-            var cityId = Guid.NewGuid();
-            var city = new CityDTO { Id = cityId, Name = "City", Population = 1000 };
-            _cityServiceMock.Setup(s => s.GetByIdAsync(cityId)).ReturnsAsync(city);
-
-            var result = await _controller.Delete(cityId) as ViewResult;
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result!.Model, Is.EqualTo(city));
-        }
-
-        [Test]
-        public async Task DeleteConfirmed_ShouldRedirectToIndex()
-        {
-            var cityId = Guid.NewGuid();
-
-            var result = await _controller.DeleteConfirmed(cityId) as RedirectToActionResult;
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result!.ActionName, Is.EqualTo("Index"));
-            _cityServiceMock.Verify(s => s.DeleteAsync(cityId), Times.Once);
-        }
     }
 }
