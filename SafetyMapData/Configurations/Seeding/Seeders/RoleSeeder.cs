@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-namespace SafetyMapWeb.Seeding.Seeders
+namespace SafetyMapData.Configurations.Seeding.Seeders
 {
     public static class RoleSeeder
     {

@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SafetyMapWeb.Attributes;
 
 namespace SafetyMapWeb.Models.CrimeStatistics
 {
     public class CrimeStatisticCreateViewModel
     {
+
         [Required]
         public Guid NeighborhoodId { get; set; }
 
@@ -16,7 +18,7 @@ namespace SafetyMapWeb.Models.CrimeStatistics
         public int CountOfCrimes { get; set; }
 
         [Required]
-        [Range(2000, 2100)]
+        [YearRange(2000)]
         public int Year { get; set; }
 
         public double TrendPercentage { get; set; }

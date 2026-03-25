@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using SafetyMapData;
-using SafetyMapWeb.Seeding.Seeders;
+using SafetyMapData.Configurations.Seeding.Seeders;
 
-namespace SafetyMapWeb.Seeding
+namespace SafetyMapData.Configurations.Seeding
 {
     public static class DbInitializer
     {

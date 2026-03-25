@@ -4,7 +4,7 @@ using SafetyMap.Core.Contracts;
 using SafetyMap.Core.Services;
 using SafetyMapData;
 using SafetyMapData.Entities;
-using SafetyMapWeb.Seeding;
+using SafetyMapData.Configurations.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
