@@ -87,6 +87,24 @@
     </div>
 </div>
 
+<!-- Image Warning Modal -->
+<div class="modal fade" id="imageWarningModal" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-warning">
+            <div class="modal-header border-bottom border-warning">
+                <h5 class="modal-title font-weight-bold text-light"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Image Selection Warning</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-light">
+                <p id="imageWarningMessage" class="fs-5 mb-0 text-center py-3"></p>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
@@ -127,7 +145,7 @@
                     var newFile = this.files[i];
                     
                     if (currentCount >= maxFiles) {
-                        alert('You can only upload a maximum of ' + maxFiles + ' images per report.');
+                        showImageAlert('You can only upload a maximum of ' + maxFiles + ' images per report.', 'warning', 'bi-exclamation-triangle-fill');
                         break;
                     }
 
@@ -154,12 +172,36 @@
                 fileInput.files = selectedFiles.files;
                 
                 if (skippedDuplicates > 0) {
-                    alert('Skipped ' + skippedDuplicates + ' identical image(s) that were already added.');
+                    showImageAlert('Skipped ' + skippedDuplicates + ' identical image(s) that were already added.', 'info', 'bi-info-circle-fill');
                 }
                 if (addedNew) {
                     renderPreviews();
                 }
             });
+
+            function showImageAlert(message, bgClass, iconClass) {
+                var modalElement = document.getElementById('imageWarningModal');
+                var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                
+                var messageEl = document.getElementById('imageWarningMessage');
+                var headerEl = modalElement.querySelector('.modal-header');
+                var iconEl = modalElement.querySelector('h5 i');
+                var contentEl = modalElement.querySelector('.modal-content');
+                
+                messageEl.innerHTML = message;
+                
+                if (bgClass === 'warning') {
+                    headerEl.className = 'modal-header border-bottom border-warning';
+                    iconEl.className = 'bi ' + iconClass + ' text-warning me-2';
+                    contentEl.className = 'modal-content bg-dark border-warning';
+                } else {
+                    headerEl.className = 'modal-header border-bottom border-info';
+                    iconEl.className = 'bi ' + iconClass + ' text-info me-2';
+                    contentEl.className = 'modal-content bg-dark border-info';
+                }
+                
+                modal.show();
+            }
 
             function renderPreviews() {
                 previewContainer.innerHTML = '';
