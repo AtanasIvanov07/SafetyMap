@@ -118,12 +118,47 @@
             var selectedFiles = new DataTransfer();
 
             fileInput.addEventListener('change', function () {
-                // Append new files to existing selection (allows picking one-by-one)
+                var currentCount = selectedFiles.files.length;
+                var maxFiles = 5;
+                var addedNew = false;
+                var skippedDuplicates = 0;
+
                 for (var i = 0; i < this.files.length; i++) {
-                    selectedFiles.items.add(this.files[i]);
+                    var newFile = this.files[i];
+                    
+                    if (currentCount >= maxFiles) {
+                        alert('You can only upload a maximum of ' + maxFiles + ' images per report.');
+                        break;
+                    }
+
+                    // Check for duplicates by name and size
+                    var isDuplicate = false;
+                    for (var j = 0; j < selectedFiles.files.length; j++) {
+                        var existingFile = selectedFiles.files[j];
+                        // If file has the exact same name and size, treat it as identical
+                        if (existingFile.name === newFile.name && existingFile.size === newFile.size) {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+
+                    if (!isDuplicate) {
+                        selectedFiles.items.add(newFile);
+                        currentCount++;
+                        addedNew = true;
+                    } else {
+                        skippedDuplicates++;
+                    }
                 }
+                
                 fileInput.files = selectedFiles.files;
-                renderPreviews();
+                
+                if (skippedDuplicates > 0) {
+                    alert('Skipped ' + skippedDuplicates + ' identical image(s) that were already added.');
+                }
+                if (addedNew) {
+                    renderPreviews();
+                }
             });
 
             function renderPreviews() {

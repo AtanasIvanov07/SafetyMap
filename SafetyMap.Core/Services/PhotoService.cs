@@ -19,7 +19,7 @@ namespace SafetyMap.Core.Services
             if (file == null || file.Length == 0)
                 return null;
 
-            try 
+            try
             {
                 await using var stream = file.OpenReadStream();
 
@@ -39,7 +39,7 @@ namespace SafetyMap.Core.Services
             }
             catch
             {
-                // Return null if upload fails (e.g. invalid credentials)
+                // Return null if upload fails because of invalid credentials
                 return null;
             }
         }

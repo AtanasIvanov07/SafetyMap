@@ -67,14 +67,21 @@ namespace SafetyMapWeb.Controllers
 
             if (model.ImageFiles != null && model.ImageFiles.Count > 0)
             {
-                foreach (var file in model.ImageFiles)
+                var distinctSignatures = new HashSet<string>();
+                var filesToProcess = model.ImageFiles.Take(5).ToList();
+
+                foreach (var file in filesToProcess)
                 {
                     if (file.Length > 0)
                     {
-                        var imageUrl = await _photoService.AddPhotoAsync(file);
-                        if (imageUrl != null)
+                        var signature = $"{file.FileName}_{file.Length}";
+                        if (distinctSignatures.Add(signature))
                         {
-                            dto.ImageUrls.Add(imageUrl);
+                            var imageUrl = await _photoService.AddPhotoAsync(file);
+                            if (imageUrl != null)
+                            {
+                                dto.ImageUrls.Add(imageUrl);
+                            }
                         }
                     }
                 }
