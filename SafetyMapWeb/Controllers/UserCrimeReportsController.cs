@@ -17,17 +17,20 @@ namespace SafetyMapWeb.Controllers
         private readonly ICityService _cityService;
         private readonly ICrimeCategoryService _crimeCategoryService;
         private readonly INeighborhoodService _neighborhoodService;
+        private readonly IPhotoService _photoService;
 
         public UserCrimeReportsController(
             IUserCrimeReportService userCrimeReportService,
             ICityService cityService,
             ICrimeCategoryService crimeCategoryService,
-            INeighborhoodService neighborhoodService)
+            INeighborhoodService neighborhoodService,
+            IPhotoService photoService)
         {
             _userCrimeReportService = userCrimeReportService;
             _cityService = cityService;
             _crimeCategoryService = crimeCategoryService;
             _neighborhoodService = neighborhoodService;
+            _photoService = photoService;
         }
 
         [HttpGet]
@@ -61,6 +64,18 @@ namespace SafetyMapWeb.Controllers
                 CityId = model.CityId,
                 NeighborhoodId = model.NeighborhoodId
             };
+
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                var imageUrl = await _photoService.AddPhotoAsync(model.ImageFile);
+                if (imageUrl == null)
+                {
+                    ModelState.AddModelError("ImageFile", "Image upload failed. Please try again or submit without an image.");
+                    await PopulateDropdowns(model);
+                    return View(model);
+                }
+                dto.ImageUrl = imageUrl;
+            }
 
             await _userCrimeReportService.SubmitReportAsync(dto, userId);
 

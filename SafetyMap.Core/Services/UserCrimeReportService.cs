@@ -45,7 +45,8 @@ namespace SafetyMap.Core.Services
                 CityId = dto.CityId,
                 NeighborhoodId = dto.NeighborhoodId,
                 UserId = userId,
-                Status = ReportStatus.Pending
+                Status = ReportStatus.Pending,
+                ImageUrl = dto.ImageUrl
             };
 
             _context.UserCrimeReports.Add(report);
@@ -70,7 +71,8 @@ namespace SafetyMap.Core.Services
                     CityName = r.City.Name,
                     NeighborhoodName = r.Neighborhood != null ? r.Neighborhood.Name : null,
                     ReporterName = r.UserIdentity.FirstName + " " + r.UserIdentity.LastName,
-                    ReporterEmail = r.UserIdentity.Email
+                    ReporterEmail = r.UserIdentity.Email,
+                    ImageUrl = r.ImageUrl
                 })
                 .ToListAsync();
         }
@@ -93,7 +95,8 @@ namespace SafetyMap.Core.Services
                     CityName = r.City.Name,
                     NeighborhoodName = r.Neighborhood != null ? r.Neighborhood.Name : null,
                     ReporterName = r.UserIdentity.FirstName + " " + r.UserIdentity.LastName,
-                    ReporterEmail = r.UserIdentity.Email
+                    ReporterEmail = r.UserIdentity.Email,
+                    ImageUrl = r.ImageUrl
                 })
                 .ToListAsync();
         }

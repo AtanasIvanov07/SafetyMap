@@ -21,5 +21,7 @@ namespace SafetyMapData.Entities
 
         public string UserId { get; set; } = string.Empty;
         public UserIdentity UserIdentity { get; set; } = null!;
+
+        public string? ImageUrl { get; set; }
     }
 }

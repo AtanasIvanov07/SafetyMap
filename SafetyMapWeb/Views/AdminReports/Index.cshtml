@@ -42,6 +42,7 @@
                         <th>Reporter</th>
                         <th>Location</th>
                         <th>Category</th>
+                        <th>Image</th>
                         <th>Description</th>
                         <th class="text-end pe-4">Actions</th>
                     </tr>
@@ -69,6 +70,18 @@
                                 }
                             </td>
                             <td><span class="badge bg-primary">@report.CrimeCategoryName</span></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(report.ImageUrl))
+                                {
+                                    <a href="@report.ImageUrl" target="_blank">
+                                        <img src="@report.ImageUrl" alt="Report Image" style="width:60px;height:60px;object-fit:cover;border-radius:6px;" />
+                                    </a>
+                                }
+                                else
+                                {
+                                    <small class="text-light opacity-50 fst-italic">No image</small>
+                                }
+                            </td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#descModal-@report.Id">
                                     <i class="bi bi-text-paragraph text-light"></i> View
@@ -107,6 +120,14 @@
                     </div>
                     <div class="modal-body text-light">
                         <p style="white-space: pre-wrap;">@report.Description</p>
+                        @if (!string.IsNullOrEmpty(report.ImageUrl))
+                        {
+                            <hr class="border-secondary" />
+                            <p class="fw-semibold"><i class="bi bi-image me-1"></i>Attached Photo:</p>
+                            <a href="@report.ImageUrl" target="_blank">
+                                <img src="@report.ImageUrl" alt="Report Image" class="img-fluid rounded" style="max-height:300px;" />
+                            </a>
+                        }
                     </div>
                     <div class="modal-footer border-top border-secondary">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CloudinaryDotNet;
 using SafetyMap.Core.Contracts;
+using SafetyMap.Core.DTOs;
 using SafetyMap.Core.Services;
 using SafetyMapData;
 using SafetyMapData.Entities;
@@ -47,6 +49,15 @@ builder.Services.AddAuthentication()
         options.Scope.Clear();
     });
 
+// Cloudinary
+var cloudinarySettings = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
+if (cloudinarySettings != null)
+{
+    var account = new Account(cloudinarySettings.CloudName, cloudinarySettings.ApiKey, cloudinarySettings.ApiSecret);
+    var cloudinary = new Cloudinary(account);
+    builder.Services.AddSingleton(cloudinary);
+}
+
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<ICrimeCategoryService, CrimeCategoryService>();
 builder.Services.AddScoped<INeighborhoodService, NeighborhoodService>();
@@ -55,6 +66,7 @@ builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
 builder.Services.AddScoped<IMapService, MapService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserCrimeReportService, UserCrimeReportService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddSingleton<IEmailQueueService, EmailQueueService>();
 builder.Services.AddHostedService<EmailBackgroundService>();

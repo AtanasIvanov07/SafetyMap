@@ -12,5 +12,6 @@ namespace SafetyMap.Core.DTOs.UserCrimeReport
         public string? NeighborhoodName { get; set; }
         public string ReporterName { get; set; } = string.Empty;
         public string ReporterEmail { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
     }
 }

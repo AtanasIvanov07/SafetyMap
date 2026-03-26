@@ -19,5 +19,7 @@ namespace SafetyMap.Core.DTOs.UserCrimeReport
         public Guid CityId { get; set; }
 
         public Guid? NeighborhoodId { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }
