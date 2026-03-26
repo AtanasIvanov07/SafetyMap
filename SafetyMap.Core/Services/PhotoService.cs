@@ -19,21 +19,29 @@ namespace SafetyMap.Core.Services
             if (file == null || file.Length == 0)
                 return null;
 
-            await using var stream = file.OpenReadStream();
-
-            var uploadParams = new ImageUploadParams
+            try 
             {
-                File = new FileDescription(file.FileName, stream),
-                Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
-                Folder = "safetymap-reports"
-            };
+                await using var stream = file.OpenReadStream();
 
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face"),
+                    Folder = "safetymap-reports"
+                };
 
-            if (uploadResult.Error != null)
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+                if (uploadResult.Error != null)
+                    return null;
+
+                return uploadResult.SecureUrl?.ToString();
+            }
+            catch
+            {
+                // Return null if upload fails (e.g. invalid credentials)
                 return null;
-
-            return uploadResult.SecureUrl?.ToString();
+            }
         }
 
         public async Task<bool> DeletePhotoAsync(string imageUrl)
