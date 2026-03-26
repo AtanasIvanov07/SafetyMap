@@ -65,22 +65,61 @@ namespace SafetyMapWeb.Controllers
                 NeighborhoodId = model.NeighborhoodId
             };
 
-            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            if (model.ImageFiles != null && model.ImageFiles.Count > 0)
             {
-                var imageUrl = await _photoService.AddPhotoAsync(model.ImageFile);
-                if (imageUrl == null)
+                foreach (var file in model.ImageFiles)
                 {
-                    ModelState.AddModelError("ImageFile", "Image upload failed. Please try again or submit without an image.");
-                    await PopulateDropdowns(model);
-                    return View(model);
+                    if (file.Length > 0)
+                    {
+                        var imageUrl = await _photoService.AddPhotoAsync(file);
+                        if (imageUrl != null)
+                        {
+                            dto.ImageUrls.Add(imageUrl);
+                        }
+                    }
                 }
-                dto.ImageUrl = imageUrl;
             }
 
             await _userCrimeReportService.SubmitReportAsync(dto, userId);
 
             TempData["SuccessMessage"] = "Thank you for your report! It is currently pending review by an administrator.";
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyReports()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var reports = await _userCrimeReportService.GetReportsByUserAsync(userId);
+            return View(reports);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteImage(Guid imageId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await _userCrimeReportService.DeleteImageAsync(imageId, userId);
+
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Image removed successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Could not remove the image. It may not exist or you don't have permission.";
+            }
+
+            return RedirectToAction("MyReports");
         }
 
         private async Task PopulateDropdowns(UserCrimeReportViewModel model)

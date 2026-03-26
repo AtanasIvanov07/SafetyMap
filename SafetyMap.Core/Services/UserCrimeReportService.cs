@@ -20,17 +20,20 @@ namespace SafetyMap.Core.Services
         private readonly SafetyMapDbContext _context;
         private readonly ICrimeStatisticService _crimeStatisticService;
         private readonly IEmailQueueService _emailQueueService;
+        private readonly IPhotoService _photoService;
         private readonly ILogger<UserCrimeReportService> _logger;
 
         public UserCrimeReportService(
             SafetyMapDbContext context,
             ICrimeStatisticService crimeStatisticService,
             IEmailQueueService emailQueueService,
+            IPhotoService photoService,
             ILogger<UserCrimeReportService> logger)
         {
             _context = context;
             _crimeStatisticService = crimeStatisticService;
             _emailQueueService = emailQueueService;
+            _photoService = photoService;
             _logger = logger;
         }
 
@@ -45,9 +48,18 @@ namespace SafetyMap.Core.Services
                 CityId = dto.CityId,
                 NeighborhoodId = dto.NeighborhoodId,
                 UserId = userId,
-                Status = ReportStatus.Pending,
-                ImageUrl = dto.ImageUrl
+                Status = ReportStatus.Pending
             };
+
+            foreach (var url in dto.ImageUrls)
+            {
+                report.Images.Add(new UserCrimeReportImage
+                {
+                    Id = Guid.NewGuid(),
+                    ImageUrl = url,
+                    UserCrimeReportId = report.Id
+                });
+            }
 
             _context.UserCrimeReports.Add(report);
             await _context.SaveChangesAsync();
@@ -60,6 +72,7 @@ namespace SafetyMap.Core.Services
                 .Include(r => r.City)
                 .Include(r => r.Neighborhood)
                 .Include(r => r.UserIdentity)
+                .Include(r => r.Images)
                 .Where(r => r.Status == ReportStatus.Pending)
                 .OrderBy(r => r.DateOfIncident)
                 .Select(r => new PendingReportDTO
@@ -72,7 +85,8 @@ namespace SafetyMap.Core.Services
                     NeighborhoodName = r.Neighborhood != null ? r.Neighborhood.Name : null,
                     ReporterName = r.UserIdentity.FirstName + " " + r.UserIdentity.LastName,
                     ReporterEmail = r.UserIdentity.Email,
-                    ImageUrl = r.ImageUrl
+                    Status = r.Status.ToString(),
+                    Images = r.Images.Select(i => new ReportImageDTO { Id = i.Id, ImageUrl = i.ImageUrl }).ToList()
                 })
                 .ToListAsync();
         }
@@ -84,6 +98,7 @@ namespace SafetyMap.Core.Services
                 .Include(r => r.City)
                 .Include(r => r.Neighborhood)
                 .Include(r => r.UserIdentity)
+                .Include(r => r.Images)
                 .Where(r => r.UserId == userId)
                 .OrderByDescending(r => r.DateOfIncident)
                 .Select(r => new PendingReportDTO
@@ -96,9 +111,31 @@ namespace SafetyMap.Core.Services
                     NeighborhoodName = r.Neighborhood != null ? r.Neighborhood.Name : null,
                     ReporterName = r.UserIdentity.FirstName + " " + r.UserIdentity.LastName,
                     ReporterEmail = r.UserIdentity.Email,
-                    ImageUrl = r.ImageUrl
+                    Status = r.Status.ToString(),
+                    Images = r.Images.Select(i => new ReportImageDTO { Id = i.Id, ImageUrl = i.ImageUrl }).ToList()
                 })
                 .ToListAsync();
+        }
+
+        public async Task<bool> DeleteImageAsync(Guid imageId, string userId)
+        {
+            var image = await _context.UserCrimeReportImages
+                .Include(i => i.UserCrimeReport)
+                .FirstOrDefaultAsync(i => i.Id == imageId);
+
+            if (image == null)
+                return false;
+
+            // Only allow the report owner to delete images, and only on pending reports
+            if (image.UserCrimeReport.UserId != userId || image.UserCrimeReport.Status != ReportStatus.Pending)
+                return false;
+
+            // Delete from Cloudinary
+            await _photoService.DeletePhotoAsync(image.ImageUrl);
+
+            _context.UserCrimeReportImages.Remove(image);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task ApproveReportAsync(Guid reportId)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SafetyMap.Core.DTOs.UserCrimeReport
 {
@@ -12,6 +13,8 @@ namespace SafetyMap.Core.DTOs.UserCrimeReport
         public string? NeighborhoodName { get; set; }
         public string ReporterName { get; set; } = string.Empty;
         public string ReporterEmail { get; set; } = string.Empty;
-        public string? ImageUrl { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public List<ReportImageDTO> Images { get; set; } = new List<ReportImageDTO>();
     }
 }
+

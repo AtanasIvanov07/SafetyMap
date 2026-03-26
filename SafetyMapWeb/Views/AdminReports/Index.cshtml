@@ -71,15 +71,20 @@
                             </td>
                             <td><span class="badge bg-primary">@report.CrimeCategoryName</span></td>
                             <td>
-                                @if (!string.IsNullOrEmpty(report.ImageUrl))
+                                @if (report.Images.Any())
                                 {
-                                    <a href="@report.ImageUrl" target="_blank">
-                                        <img src="@report.ImageUrl" alt="Report Image" style="width:60px;height:60px;object-fit:cover;border-radius:6px;" />
-                                    </a>
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        @foreach (var img in report.Images)
+                                        {
+                                            <a href="@img.ImageUrl" target="_blank">
+                                                <img src="@img.ImageUrl" alt="Report Image" style="width:50px;height:50px;object-fit:cover;border-radius:6px;" />
+                                            </a>
+                                        }
+                                    </div>
                                 }
                                 else
                                 {
-                                    <small class="text-light opacity-50 fst-italic">No image</small>
+                                    <small class="text-light opacity-50 fst-italic">No images</small>
                                 }
                             </td>
                             <td>
@@ -120,13 +125,18 @@
                     </div>
                     <div class="modal-body text-light">
                         <p style="white-space: pre-wrap;">@report.Description</p>
-                        @if (!string.IsNullOrEmpty(report.ImageUrl))
+                        @if (report.Images.Any())
                         {
                             <hr class="border-secondary" />
-                            <p class="fw-semibold"><i class="bi bi-image me-1"></i>Attached Photo:</p>
-                            <a href="@report.ImageUrl" target="_blank">
-                                <img src="@report.ImageUrl" alt="Report Image" class="img-fluid rounded" style="max-height:300px;" />
-                            </a>
+                            <p class="fw-semibold"><i class="bi bi-images me-1"></i>Attached Photos (@report.Images.Count):</p>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                @foreach (var img in report.Images)
+                                {
+                                    <a href="@img.ImageUrl" target="_blank">
+                                        <img src="@img.ImageUrl" alt="Report Image" class="rounded" style="max-height:200px;max-width:200px;object-fit:cover;" />
+                                    </a>
+                                }
+                            </div>
                         }
                     </div>
                     <div class="modal-footer border-top border-secondary">

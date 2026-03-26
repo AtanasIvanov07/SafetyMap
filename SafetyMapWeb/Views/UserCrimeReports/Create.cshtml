@@ -63,13 +63,15 @@
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="ImageFile" class="form-label text-light fw-semibold"></label>
+                    <label asp-for="ImageFiles" class="form-label text-light fw-semibold"></label>
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-camera"></i></span>
-                        <input asp-for="ImageFile" class="form-control form-control-lg" type="file" accept="image/*" />
+                        <input asp-for="ImageFiles" class="form-control form-control-lg" type="file" accept="image/*" multiple id="imageFilesInput" />
                     </div>
-                    <span asp-validation-for="ImageFile" class="text-danger small"></span>
-                    <small class="text-secondary">Supported formats: JPG, PNG, GIF. Max 10 MB.</small>
+                    <span asp-validation-for="ImageFiles" class="text-danger small"></span>
+                    <small class="text-secondary">You can select multiple images. Supported: JPG, PNG, GIF.</small>
+
+                    <div id="imagePreviewContainer" class="d-flex flex-wrap gap-2 mt-3"></div>
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -109,6 +111,74 @@
                     });
                 }
             });
+
+            // Image preview with remove
+            var fileInput = document.getElementById('imageFilesInput');
+            var previewContainer = document.getElementById('imagePreviewContainer');
+            var selectedFiles = new DataTransfer();
+
+            fileInput.addEventListener('change', function () {
+                // Append new files to existing selection (allows picking one-by-one)
+                for (var i = 0; i < this.files.length; i++) {
+                    selectedFiles.items.add(this.files[i]);
+                }
+                fileInput.files = selectedFiles.files;
+                renderPreviews();
+            });
+
+            function renderPreviews() {
+                previewContainer.innerHTML = '';
+                for (var i = 0; i < selectedFiles.files.length; i++) {
+                    (function (index) {
+                        var file = selectedFiles.files[index];
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var wrapper = document.createElement('div');
+                            wrapper.style.position = 'relative';
+                            wrapper.style.display = 'inline-block';
+
+                            var img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.width = '80px';
+                            img.style.height = '80px';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '8px';
+                            img.style.border = '2px solid #444';
+
+                            var removeBtn = document.createElement('button');
+                            removeBtn.type = 'button';
+                            removeBtn.innerHTML = '&times;';
+                            removeBtn.className = 'btn btn-danger btn-sm';
+                            removeBtn.style.position = 'absolute';
+                            removeBtn.style.top = '-8px';
+                            removeBtn.style.right = '-8px';
+                            removeBtn.style.borderRadius = '50%';
+                            removeBtn.style.width = '22px';
+                            removeBtn.style.height = '22px';
+                            removeBtn.style.padding = '0';
+                            removeBtn.style.fontSize = '14px';
+                            removeBtn.style.lineHeight = '1';
+
+                            removeBtn.addEventListener('click', function () {
+                                var newDt = new DataTransfer();
+                                for (var j = 0; j < selectedFiles.files.length; j++) {
+                                    if (j !== index) {
+                                        newDt.items.add(selectedFiles.files[j]);
+                                    }
+                                }
+                                selectedFiles = newDt;
+                                fileInput.files = selectedFiles.files;
+                                renderPreviews();
+                            });
+
+                            wrapper.appendChild(img);
+                            wrapper.appendChild(removeBtn);
+                            previewContainer.appendChild(wrapper);
+                        };
+                        reader.readAsDataURL(file);
+                    })(i);
+                }
+            }
         });
     </script>
 }

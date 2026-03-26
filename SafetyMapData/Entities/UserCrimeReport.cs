@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SafetyMapData.Enums;
 
 namespace SafetyMapData.Entities
@@ -22,6 +23,6 @@ namespace SafetyMapData.Entities
         public string UserId { get; set; } = string.Empty;
         public UserIdentity UserIdentity { get; set; } = null!;
 
-        public string? ImageUrl { get; set; }
+        public ICollection<UserCrimeReportImage> Images { get; set; } = new List<UserCrimeReportImage>();
     }
 }

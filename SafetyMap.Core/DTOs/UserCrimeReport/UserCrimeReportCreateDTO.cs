@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SafetyMap.Core.DTOs.UserCrimeReport
@@ -20,6 +21,7 @@ namespace SafetyMap.Core.DTOs.UserCrimeReport
 
         public Guid? NeighborhoodId { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public List<string> ImageUrls { get; set; } = new List<string>();
     }
 }
+

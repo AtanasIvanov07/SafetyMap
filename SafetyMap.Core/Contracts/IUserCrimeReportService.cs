@@ -13,5 +13,6 @@ namespace SafetyMap.Core.Contracts
         Task<IEnumerable<PendingReportDTO>> GetReportsByUserAsync(string userId);
         Task ApproveReportAsync(Guid reportId);
         Task RejectReportAsync(Guid reportId);
+        Task<bool> DeleteImageAsync(Guid imageId, string userId);
     }
 }

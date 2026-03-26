@@ -28,8 +28,8 @@ namespace SafetyMapWeb.Models.UserCrimeReports
         [DataType(DataType.Date)]
         public DateTime DateOfIncident { get; set; } = DateTime.Now;
 
-        [Display(Name = "Attach Photo (Optional)")]
-        public IFormFile? ImageFile { get; set; }
+        [Display(Name = "Attach Photos (Optional)")]
+        public List<IFormFile>? ImageFiles { get; set; }
 
         public IEnumerable<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> CrimeCategories { get; set; } = new List<SelectListItem>();

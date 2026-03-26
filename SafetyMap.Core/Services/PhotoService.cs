@@ -35,5 +35,36 @@ namespace SafetyMap.Core.Services
 
             return uploadResult.SecureUrl?.ToString();
         }
+
+        public async Task<bool> DeletePhotoAsync(string imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+                return false;
+
+            // Extract the public ID from the Cloudinary URL
+            // URL format: https://res.cloudinary.com/{cloud}/image/upload/v{version}/{folder}/{publicId}.{ext}
+            try
+            {
+                var uri = new Uri(imageUrl);
+                var segments = uri.AbsolutePath.Split('/');
+
+                var uploadIndex = Array.IndexOf(segments, "upload");
+                if (uploadIndex < 0 || uploadIndex + 2 >= segments.Length)
+                    return false;
+
+                var relevantParts = segments.Skip(uploadIndex + 2).ToArray();
+                var publicIdWithExt = string.Join("/", relevantParts);
+                var publicId = System.IO.Path.ChangeExtension(publicIdWithExt, null);
+
+                var deleteParams = new DeletionParams(publicId);
+                var result = await _cloudinary.DestroyAsync(deleteParams);
+
+                return result.Result == "ok";
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
