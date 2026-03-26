@@ -105,6 +105,38 @@
     </div>
 </div>
 
+<!-- Lightbox Modal -->
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0 shadow-lg">
+            <div class="card bg-dark text-light border-0 shadow">
+                <div class="card-header d-flex justify-content-between align-items-center border-secondary bg-dark pt-3 pb-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-image text-primary me-2"></i>Image Preview</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="card-body text-center p-0 bg-black">
+                    <img id="lightboxImg" src="" alt="Full Image"
+                         class="img-fluid w-100"
+                         style="max-height:75vh;object-fit:contain;" />
+                </div>
+                <div class="card-footer border-secondary bg-dark text-end py-3">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close Preview</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .lightbox-trigger {
+        transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .lightbox-trigger:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+</style>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
@@ -221,6 +253,13 @@
                             img.style.objectFit = 'cover';
                             img.style.borderRadius = '8px';
                             img.style.border = '2px solid #444';
+                            img.className = 'lightbox-trigger';
+                            img.style.cursor = 'pointer';
+                            img.setAttribute('data-bs-toggle', 'modal');
+                            img.setAttribute('data-bs-target', '#lightboxModal');
+                            img.onclick = function() {
+                                document.getElementById('lightboxImg').src = this.src;
+                            };
 
                             var removeBtn = document.createElement('button');
                             removeBtn.type = 'button';
