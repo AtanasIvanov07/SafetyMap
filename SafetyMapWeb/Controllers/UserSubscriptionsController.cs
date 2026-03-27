@@ -45,33 +45,33 @@ namespace SafetyMapWeb.Controllers
             return View(subscription);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var model = new UserSubscriptionCreateViewModel();
-            var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
-            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
-            return View(model);
-        }
+        // [HttpGet]
+        // public async Task<IActionResult> Create()
+        // {
+        //     var model = new UserSubscriptionCreateViewModel();
+        //     var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
+        //     model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+        //     return View(model);
+        // }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(UserSubscriptionCreateViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var dto = new UserSubscriptionCreateDTO
-                {
-                    UserId = model.UserId,
-                    NeighborhoodId = model.NeighborhoodId
-                };
+        // [HttpPost]
+        // public async Task<IActionResult> Create(UserSubscriptionCreateViewModel model)
+        // {
+        //     if (ModelState.IsValid)
+        //     {
+        //         var dto = new UserSubscriptionCreateDTO
+        //         {
+        //             UserId = model.UserId,
+        //             NeighborhoodId = model.NeighborhoodId
+        //         };
 
-                await _userSubscriptionService.CreateAsync(dto);
-                return RedirectToAction(nameof(Index));
-            }
-            var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
-            model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
-            return View(model);
-        }
+        //         await _userSubscriptionService.CreateAsync(dto);
+        //         return RedirectToAction(nameof(Index));
+        //     }
+        //     var neighborhoods = await _userSubscriptionService.GetNeighborhoodSelectListAsync();
+        //     model.Neighborhoods = neighborhoods.Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+        //     return View(model);
+        // }
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
