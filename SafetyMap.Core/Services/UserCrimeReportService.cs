@@ -212,12 +212,21 @@ namespace SafetyMap.Core.Services
         {
             var report = await _context.UserCrimeReports
                 .Include(r => r.UserIdentity)
+                .Include(r => r.Images)
                 .FirstOrDefaultAsync(r => r.Id == reportId);
 
             if (report == null || report.Status != ReportStatus.Pending)
             {
                 throw new ArgumentException("Invalid report or report is not pending.");
             }
+
+            // ako admin rejectne reporta, da se iztriqt snimkite ot cloudinary
+            foreach (var image in report.Images)
+            {
+                await _photoService.DeletePhotoAsync(image.ImageUrl);
+            }
+
+            _context.UserCrimeReportImages.RemoveRange(report.Images);
 
             report.Status = ReportStatus.Rejected;
             await _context.SaveChangesAsync();
