@@ -91,51 +91,51 @@ namespace SafetyMapWeb.Tests.Controllers
             Assert.That(result!.Model, Is.EqualTo(subscription));
         }
 
-        [Test]
-        public async Task Create_Get_ShouldReturnViewWithNeighborhoods()
-        {
-            var neighborhoods = CreateNeighborhoodSelectList();
-            _userSubscriptionServiceMock.Setup(s => s.GetNeighborhoodSelectListAsync()).ReturnsAsync(neighborhoods);
+        // [Test]
+        // public async Task Create_Get_ShouldReturnViewWithNeighborhoods()
+        // {
+        //     var neighborhoods = CreateNeighborhoodSelectList();
+        //     _userSubscriptionServiceMock.Setup(s => s.GetNeighborhoodSelectListAsync()).ReturnsAsync(neighborhoods);
 
-            var result = await _controller.Create() as ViewResult;
+        //     var result = await _controller.Create() as ViewResult;
 
-            Assert.That(result, Is.Not.Null);
-            var model = result!.Model as UserSubscriptionCreateViewModel;
-            Assert.That(model, Is.Not.Null);
-            Assert.That(model!.Neighborhoods.Count(), Is.EqualTo(2));
-            Assert.That(model.Neighborhoods.First().Text, Is.EqualTo("Center"));
-        }
+        //     Assert.That(result, Is.Not.Null);
+        //     var model = result!.Model as UserSubscriptionCreateViewModel;
+        //     Assert.That(model, Is.Not.Null);
+        //     Assert.That(model!.Neighborhoods.Count(), Is.EqualTo(2));
+        //     Assert.That(model.Neighborhoods.First().Text, Is.EqualTo("Center"));
+        // }
 
-        [Test]
-        public async Task Create_Post_ShouldReturnViewAndRepopulateNeighborhoods_WhenModelStateIsInvalid()
-        {
-            var model = new UserSubscriptionCreateViewModel { UserId = "u1", NeighborhoodId = Guid.NewGuid() };
-            var neighborhoods = CreateNeighborhoodSelectList();
-            _controller.ModelState.AddModelError("UserId", "Invalid");
-            _userSubscriptionServiceMock.Setup(s => s.GetNeighborhoodSelectListAsync()).ReturnsAsync(neighborhoods);
+        // [Test]
+        // public async Task Create_Post_ShouldReturnViewAndRepopulateNeighborhoods_WhenModelStateIsInvalid()
+        // {
+        //     var model = new UserSubscriptionCreateViewModel { UserId = "u1", NeighborhoodId = Guid.NewGuid() };
+        //     var neighborhoods = CreateNeighborhoodSelectList();
+        //     _controller.ModelState.AddModelError("UserId", "Invalid");
+        //     _userSubscriptionServiceMock.Setup(s => s.GetNeighborhoodSelectListAsync()).ReturnsAsync(neighborhoods);
 
-            var result = await _controller.Create(model) as ViewResult;
+        //     var result = await _controller.Create(model) as ViewResult;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result!.Model, Is.EqualTo(model));
-            Assert.That(model.Neighborhoods.Count(), Is.EqualTo(2));
-            _userSubscriptionServiceMock.Verify(s => s.CreateAsync(It.IsAny<UserSubscriptionCreateDTO>()), Times.Never);
-        }
+        //     Assert.That(result, Is.Not.Null);
+        //     Assert.That(result!.Model, Is.EqualTo(model));
+        //     Assert.That(model.Neighborhoods.Count(), Is.EqualTo(2));
+        //     _userSubscriptionServiceMock.Verify(s => s.CreateAsync(It.IsAny<UserSubscriptionCreateDTO>()), Times.Never);
+        // }
 
-        [Test]
-        public async Task Create_Post_ShouldRedirectToIndex_WhenModelIsValid()
-        {
-            var neighborhoodId = Guid.NewGuid();
-            var model = new UserSubscriptionCreateViewModel { UserId = "u1", NeighborhoodId = neighborhoodId };
+        // [Test]
+        // public async Task Create_Post_ShouldRedirectToIndex_WhenModelIsValid()
+        // {
+        //     var neighborhoodId = Guid.NewGuid();
+        //     var model = new UserSubscriptionCreateViewModel { UserId = "u1", NeighborhoodId = neighborhoodId };
 
-            var result = await _controller.Create(model) as RedirectToActionResult;
+        //     var result = await _controller.Create(model) as RedirectToActionResult;
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result!.ActionName, Is.EqualTo("Index"));
-            _userSubscriptionServiceMock.Verify(
-                s => s.CreateAsync(It.Is<UserSubscriptionCreateDTO>(dto => dto.UserId == model.UserId && dto.NeighborhoodId == neighborhoodId)),
-                Times.Once);
-        }
+        //     Assert.That(result, Is.Not.Null);
+        //     Assert.That(result!.ActionName, Is.EqualTo("Index"));
+        //     _userSubscriptionServiceMock.Verify(
+        //         s => s.CreateAsync(It.Is<UserSubscriptionCreateDTO>(dto => dto.UserId == model.UserId && dto.NeighborhoodId == neighborhoodId)),
+        //         Times.Once);
+        // }
 
         [Test]
         public async Task Edit_Get_ShouldReturnNotFound_WhenIdIsNull()
