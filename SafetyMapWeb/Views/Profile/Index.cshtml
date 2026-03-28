@@ -38,9 +38,15 @@
                                     </div>
                                 }
                             </div>
-                            <div class="mt-4 col-md-8 mx-auto">
-                                <label asp-for="ProfilePicture" class="form-label text-muted small fw-bold text-uppercase tracking-wide"><i class="bi bi-camera me-1"></i> Update Profile Picture</label>
-                                <input asp-for="ProfilePicture" class="form-control bg-dark text-light border-secondary shadow-sm" type="file" accept="image/*" />
+                            <div class="mt-4 col-md-8 mx-auto text-center">
+                                <label asp-for="ProfilePicture" class="form-label d-block text-muted small fw-bold text-uppercase tracking-wide mb-3"><i class="bi bi-camera me-1"></i> Update Profile Picture</label>
+                                
+                                <label for="ProfilePicture" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold shadow-sm" style="cursor: pointer; transition: all 0.3s ease;">
+                                    <i class="bi bi-cloud-arrow-up-fill me-2"></i> Choose File
+                                </label>
+                                <input asp-for="ProfilePicture" class="d-none" type="file" accept="image/*" onchange="document.getElementById('fileNameDisplay').textContent = this.files.length > 0 ? this.files[0].name : 'No file chosen';" />
+                                
+                                <div id="fileNameDisplay" class="text-secondary small mt-2 fst-italic">No file chosen</div>
                                 <span asp-validation-for="ProfilePicture" class="text-danger small mt-1 d-block"></span>
                             </div>
                         </div>

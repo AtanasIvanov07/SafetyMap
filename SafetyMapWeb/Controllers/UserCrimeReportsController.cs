@@ -57,7 +57,7 @@ namespace SafetyMapWeb.Controllers
                 return Unauthorized();
             }
 
-            // Rate Limiting check
+
             var cacheKey = $"ReportRateLimit_{userId}";
             if (memoryCache != null && memoryCache.TryGetValue(cacheKey, out bool _))
             {
@@ -101,7 +101,7 @@ namespace SafetyMapWeb.Controllers
             {
                 await _userCrimeReportService.SubmitReportAsync(dto, userId);
 
-                // Set rate limit for 2 minutes after successful submission
+
                 if (memoryCache != null)
                 {
                     memoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(2));
