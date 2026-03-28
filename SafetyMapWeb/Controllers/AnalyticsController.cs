@@ -15,13 +15,11 @@ namespace SafetyMapWeb.Controllers
             _analyticsService = analyticsService;
         }
 
-        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
-
-        // ── JSON API Endpoints ──
 
         [HttpGet]
         public async Task<IActionResult> GetCrimeTrend()

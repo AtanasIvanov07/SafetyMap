@@ -45,6 +45,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link text-success" asp-area="" asp-controller="Analytics" asp-action="Index">
+                                    <i class="bi bi-graph-up me-1"></i> Analytics
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-warning" asp-area="" asp-controller="UserCrimeReports" asp-action="Create">
                                     <i class="bi bi-exclamation-triangle-fill me-1"></i> Report Crime
                                 </a>
@@ -95,12 +100,6 @@
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2" asp-area=""
-                                            asp-controller="Analytics" asp-action="Index">
-                                            <i class="bi bi-graph-up text-muted"></i> Analytics Dashboard
-                                        </a>
-                                    </li>
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2" asp-area=""
                                             asp-controller="AdminReports" asp-action="Index">
