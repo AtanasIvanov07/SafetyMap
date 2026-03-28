@@ -1,4 +1,4 @@
-﻿@using SafetyMapWeb.Models
+@using SafetyMapWeb.Models
 @model LoginViewModel
 @{
     ViewData["Title"] = "Log in";
@@ -23,6 +23,10 @@
                     <label asp-for="Password" class="form-label">Password</label>
                     <input asp-for="Password" class="form-control" type="password" autocomplete="current-password" aria-required="true" />
                     <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 text-end">
+                    <a asp-action="ForgotPassword" class="text-decoration-none small text-info">Forgot your password?</a>
                 </div>
 
                 <div class="text-center">

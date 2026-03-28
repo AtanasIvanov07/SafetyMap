@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SafetyMap.Core.Contracts;
 using SafetyMapData.Entities;
 using System.Security.Claims;
@@ -40,10 +41,28 @@ namespace SafetyMap.Core.Services
             return result;
         }
 
-        public async Task<bool> LoginAsync(string userName, string password)
+        public async Task<SignInResult> LoginAsync(string userName, string password)
         {
-            var result = await _signInManager.PasswordSignInAsync(userName, password, false, false);
-            return result.Succeeded;
+            return await _signInManager.PasswordSignInAsync(userName, password, false, false);
+        }
+
+        public async Task<string?> GeneratePasswordResetTokenAsync(string email)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return null;
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(string email, string token, string newPassword)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        public async Task<SignInResult> TwoFactorAuthenticatorSignInAsync(string code, bool isPersistent, bool rememberClient)
+        {
+            return await _signInManager.TwoFactorAuthenticatorSignInAsync(code, isPersistent, rememberClient);
         }
 
         public async Task LogoutAsync()
@@ -78,7 +97,7 @@ namespace SafetyMap.Core.Services
 
                 if (email != null)
                 {
-                    var user = await _userManager.FindByEmailAsync(email);
+                    var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == email);
 
                     if (user == null)
                     {

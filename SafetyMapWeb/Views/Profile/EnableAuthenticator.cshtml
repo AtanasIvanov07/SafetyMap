@@ -1,0 +1,72 @@
+@using SafetyMapWeb.Models
+@model EnableAuthenticatorViewModel
+@{
+    ViewData["Title"] = "Configure authenticator app";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="dashboard-card p-4 border-top border-warning border-3">
+            <h2 class="text-center mb-1"><i class="bi bi-phone text-warning me-2"></i>Configure Authenticator App</h2>
+            <p class="text-center text-light opacity-75 small mb-4">To use an authenticator app go through the following steps:</p>
+
+            <div class="text-light">
+                <ol class="list-group list-group-numbered list-group-flush bg-transparent mb-4">
+                    <li class="list-group-item bg-transparent text-light border-secondary">
+                        <p class="mb-2">Download a two-factor authenticator app like Microsoft Authenticator, Google Authenticator or Authy.</p>
+                    </li>
+                    <li class="list-group-item bg-transparent text-light border-secondary">
+                        <p class="mb-2">Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
+                        <div class="text-center my-4 bg-white p-3 d-inline-block rounded" id="qrCode"></div>
+                        <div id="qrCodeData" data-url="@Html.Raw(Model.AuthenticatorUri)"></div>
+                    </li>
+                    <li class="list-group-item bg-transparent text-light border-secondary border-bottom-0 pb-0">
+                        <p class="mb-3">
+                            Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
+                            with a unique code. Enter the code in the confirmation box below.
+                        </p>
+                        <form method="post">
+                            <input asp-for="AuthenticatorUri" type="hidden" />
+                            <input asp-for="SharedKey" type="hidden" />
+                            
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label asp-for="Code" class="form-label">Verification Code</label>
+                                        <input asp-for="Code" class="form-control bg-dark text-light border-secondary text-center fw-bold fs-4 tracking-wide" autocomplete="off" placeholder="123456" />
+                                        <span asp-validation-for="Code" class="text-danger small"></span>
+                                    </div>
+                                    <div class="d-grid mb-3">
+                                        <button type="submit" class="btn btn-warning action-btn text-dark fw-bold">Verify & Enable</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                </ol>
+            </div>
+            
+            <div class="text-center mt-2 border-top border-secondary pt-3">
+                <a asp-action="Index" class="text-decoration-none small text-warning"><i class="bi bi-arrow-left me-1"></i>Back to Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="text/javascript">
+        window.addEventListener("load", () => {
+            const uri = document.getElementById("qrCodeData").getAttribute('data-url');
+            new QRCode(document.getElementById("qrCode"), {
+                text: uri,
+                width: 150,
+                height: 150,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+}

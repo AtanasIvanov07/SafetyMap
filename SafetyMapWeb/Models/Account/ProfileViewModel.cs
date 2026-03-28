@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace SafetyMapWeb.Models
+namespace SafetyMapWeb.Models.Account
 {
     public class ProfileViewModel
     {
@@ -38,5 +38,7 @@ namespace SafetyMapWeb.Models
         [DataType(DataType.Password)]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string? ConfirmPassword { get; set; }
+
+        public bool Is2faEnabled { get; set; }
     }
 }

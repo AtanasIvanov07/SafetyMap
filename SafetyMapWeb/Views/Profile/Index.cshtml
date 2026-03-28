@@ -118,6 +118,39 @@
                             </button>
                         </div>
                     </form>
+
+                    <hr class="text-secondary opacity-50 my-5" />
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0 fw-bold text-info"><i class="bi bi-phone-vibrate me-2"></i> Two-Factor Authentication</h4>
+                    </div>
+
+                    @if (Model.Is2faEnabled)
+                    {
+                        <div class="alert alert-success d-flex align-items-center mb-4 border-success border-opacity-25 bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-shield-check fs-4 me-3"></i>
+                            <div>
+                                <strong>Two-factor authentication is enabled.</strong> Your account is currently protected.
+                            </div>
+                        </div>
+                        <form asp-action="Disable2fa" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger fw-bold shadow-sm">
+                                <i class="bi bi-shield-x me-2"></i> Disable 2FA
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning d-flex align-items-center mb-4 border-warning border-opacity-25 bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-shield-exclamation fs-4 me-3"></i>
+                            <div>
+                                <strong>Two-factor authentication is disabled.</strong> Enable it to add an extra layer of security to your account.
+                            </div>
+                        </div>
+                        <a asp-action="EnableAuthenticator" class="btn btn-warning text-dark fw-bold shadow-sm">
+                            <i class="bi bi-shield-plus me-2"></i> Setup 2FA
+                        </a>
+                    }
                 </div>
             </div>
         </div>

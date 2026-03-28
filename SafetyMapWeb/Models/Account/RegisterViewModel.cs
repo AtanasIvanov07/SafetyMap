@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace SafetyMapWeb.Models
+namespace SafetyMapWeb.Models.Account
 {
     public class RegisterViewModel
     {

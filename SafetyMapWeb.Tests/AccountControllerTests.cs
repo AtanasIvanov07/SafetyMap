@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SafetyMap.Core.Contracts;
 using SafetyMapWeb.Controllers;
 using SafetyMapWeb.Models;
+using SafetyMapWeb.Models.Account;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -18,13 +19,15 @@ namespace SafetyMapWeb.Tests.Controllers
     public class AccountControllerTests
     {
         private Mock<IAccountService> _accountServiceMock;
+        private Mock<IEmailQueueService> _emailQueueServiceMock;
         private AccountController _controller;
 
         [SetUp]
         public void SetUp()
         {
             _accountServiceMock = new Mock<IAccountService>();
-            _controller = new AccountController(_accountServiceMock.Object);
+            _emailQueueServiceMock = new Mock<IEmailQueueService>();
+            _controller = new AccountController(_accountServiceMock.Object, _emailQueueServiceMock.Object);
 
             var urlHelperMock = new Mock<IUrlHelper>();
             urlHelperMock.Setup(u => u.Content("~/")).Returns("/");
@@ -144,7 +147,7 @@ namespace SafetyMapWeb.Tests.Controllers
         {
             var model = new LoginViewModel { UserName = "testuser", Password = "password" };
             _accountServiceMock.Setup(s => s.LoginAsync(model.UserName, model.Password))
-                .ReturnsAsync(true);
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
 
             var result = await _controller.Login(model) as RedirectToActionResult;
 
@@ -158,7 +161,7 @@ namespace SafetyMapWeb.Tests.Controllers
         {
             var model = new LoginViewModel { UserName = "testuser", Password = "password" };
             _accountServiceMock.Setup(s => s.LoginAsync(model.UserName, model.Password))
-                .ReturnsAsync(false);
+                .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
             var result = await _controller.Login(model) as ViewResult;
 
