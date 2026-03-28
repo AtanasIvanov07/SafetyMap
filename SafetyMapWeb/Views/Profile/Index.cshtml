@@ -1,0 +1,123 @@
+@using SafetyMapWeb.Models
+@model ProfileViewModel
+
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-4">
+                    <h2 class="mb-0 fw-bold"><i class="bi bi-person-circle me-2"></i> @ViewData["Title"]</h2>
+                </div>
+                <div class="card-body p-5 bg-dark text-light border border-secondary rounded-bottom-4">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form id="profileForm" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4 text-center"></div>
+
+                        <!-- Profile Picture Section -->
+                        <div class="text-center mb-5">
+                            <div class="position-relative d-inline-block">
+                                @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                                {
+                                    <img src="@Model.ProfilePictureUrl" alt="Profile Picture" class="rounded-circle shadow-lg border border-3 border-primary" style="width: 160px; height: 160px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle shadow-lg bg-secondary border border-3 border-primary d-inline-flex align-items-center justify-content-center text-white" style="width: 160px; height: 160px; font-size: 5rem;">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="mt-4 col-md-8 mx-auto">
+                                <label asp-for="ProfilePicture" class="form-label text-muted small fw-bold text-uppercase tracking-wide"><i class="bi bi-camera me-1"></i> Update Profile Picture</label>
+                                <input asp-for="ProfilePicture" class="form-control bg-dark text-light border-secondary shadow-sm" type="file" accept="image/*" />
+                                <span asp-validation-for="ProfilePicture" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                        </div>
+
+                        <hr class="text-secondary opacity-50 my-4" />
+
+                        <h4 class="mb-4 fw-bold text-primary"><i class="bi bi-info-circle me-2"></i> Personal Information</h4>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="FirstName" class="form-control bg-dark text-light border-secondary shadow-sm" placeholder="First Name" />
+                                    <label asp-for="FirstName" class="text-muted"><i class="bi bi-person-badge"></i> First Name</label>
+                                    <span asp-validation-for="FirstName" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="LastName" class="form-control bg-dark text-light border-secondary shadow-sm" placeholder="Last Name" />
+                                    <label asp-for="LastName" class="text-muted"><i class="bi bi-person-badge"></i> Last Name</label>
+                                    <span asp-validation-for="LastName" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-5 form-floating">
+                            <input asp-for="Email" class="form-control bg-dark text-light border-secondary shadow-sm" type="email" placeholder="Email Address" />
+                            <label asp-for="Email" class="text-muted"><i class="bi bi-envelope"></i> Email Address</label>
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <hr class="text-secondary opacity-50 my-4" />
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0 fw-bold text-warning"><i class="bi bi-shield-lock me-2"></i> Security</h4>
+                            <span class="badge bg-secondary">Optional</span>
+                        </div>
+                        <p class="text-muted small mb-4 bg-dark py-2 px-3 rounded border border-secondary shadow-sm">
+                            <i class="bi bi-lightbulb text-warning me-1"></i> Leave password fields blank if you do not wish to change your current password.
+                        </p>
+
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input asp-for="CurrentPassword" class="form-control bg-dark text-light border-secondary shadow-sm" type="password" placeholder="Current Password" />
+                                    <label asp-for="CurrentPassword" class="text-muted"><i class="bi bi-key"></i> Current Password</label>
+                                    <span asp-validation-for="CurrentPassword" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="NewPassword" class="form-control bg-dark text-light border-secondary shadow-sm" type="password" placeholder="New Password" />
+                                    <label asp-for="NewPassword" class="text-muted"><i class="bi bi-lock"></i> New Password</label>
+                                    <span asp-validation-for="NewPassword" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="ConfirmPassword" class="form-control bg-dark text-light border-secondary shadow-sm" type="password" placeholder="Confirm Password" />
+                                    <label asp-for="ConfirmPassword" class="text-muted"><i class="bi bi-lock-fill"></i> Confirm Password</label>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg shadow fw-bold py-3 text-uppercase tracking-wider">
+                                <i class="bi bi-save2 me-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

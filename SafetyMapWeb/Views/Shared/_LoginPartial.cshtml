@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using SafetyMapData.Entities;
 @inject SignInManager<UserIdentity> SignInManager
 @inject UserManager<UserIdentity> UserManager
@@ -8,7 +8,19 @@
     {
         var user = await UserManager.GetUserAsync(User);
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index" title="Manage">Hello @user?.FirstName @user?.LastName</a>
+            <a class="nav-link text-light d-flex align-items-center gap-2 me-3" asp-area="" asp-controller="Profile" asp-action="Index" title="Manage Profile">
+                @if (!string.IsNullOrEmpty(user?.ProfilePictureUrl))
+                {
+                    <img src="@user.ProfilePictureUrl" alt="Profile" class="rounded-circle border border-2 border-primary shadow-sm" style="width: 38px; height: 38px; object-fit: cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-dark text-light border border-2 border-primary shadow-sm d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-person-fill fs-5"></i>
+                    </div>
+                }
+                <span class="fw-bold tracking-wide">Hello @user?.FirstName</span>
+            </a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

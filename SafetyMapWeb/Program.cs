@@ -64,6 +64,7 @@ builder.Services.AddScoped<INeighborhoodService, NeighborhoodService>();
 builder.Services.AddScoped<ICrimeStatisticService, CrimeStatisticService>();
 builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
 builder.Services.AddScoped<IMapService, MapService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IUserCrimeReportService, UserCrimeReportService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
@@ -71,6 +72,7 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddSingleton<IEmailQueueService, EmailQueueService>();
 builder.Services.AddHostedService<EmailBackgroundService>();
 
+builder.Services.AddMemoryCache();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

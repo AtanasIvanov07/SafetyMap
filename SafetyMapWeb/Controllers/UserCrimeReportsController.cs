@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Caching.Memory;
 using SafetyMap.Core.Contracts;
 using SafetyMap.Core.DTOs;
 using SafetyMap.Core.DTOs.Neighborhood;
@@ -42,7 +43,7 @@ namespace SafetyMapWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UserCrimeReportViewModel model)
+        public async Task<IActionResult> Create(UserCrimeReportViewModel model, [FromServices] Microsoft.Extensions.Caching.Memory.IMemoryCache memoryCache)
         {
             if (!ModelState.IsValid)
             {
@@ -54,6 +55,15 @@ namespace SafetyMapWeb.Controllers
             if (userId == null)
             {
                 return Unauthorized();
+            }
+
+            // Rate Limiting check
+            var cacheKey = $"ReportRateLimit_{userId}";
+            if (memoryCache != null && memoryCache.TryGetValue(cacheKey, out bool _))
+            {
+                ModelState.AddModelError(string.Empty, "You are submitting reports too frequently. Please wait a few minutes and try again.");
+                await PopulateDropdowns(model);
+                return View(model);
             }
 
             var dto = new UserCrimeReportCreateDTO
@@ -87,7 +97,22 @@ namespace SafetyMapWeb.Controllers
                 }
             }
 
-            await _userCrimeReportService.SubmitReportAsync(dto, userId);
+            try
+            {
+                await _userCrimeReportService.SubmitReportAsync(dto, userId);
+
+                // Set rate limit for 2 minutes after successful submission
+                if (memoryCache != null)
+                {
+                    memoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(2));
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                await PopulateDropdowns(model);
+                return View(model);
+            }
 
             TempData["SuccessMessage"] = "Thank you for your report! It is currently pending review by an administrator.";
             return RedirectToAction("Index", "Home");

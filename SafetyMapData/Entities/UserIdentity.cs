@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,7 @@ namespace SafetyMapData.Entities
      {
         public string  FirstName { get; set; }
         public string LastName { get; set; }
+        public string? ProfilePictureUrl { get; set; }
         public virtual ICollection<UserSubscription> Subscriptions { get; set; }
 
         public UserIdentity()

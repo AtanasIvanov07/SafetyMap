@@ -1,0 +1,459 @@
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 text-light fw-bold mb-1"><i class="bi bi-graph-up text-primary me-2"></i>Analytics Dashboard</h1>
+            <p class="text-light opacity-75 mb-0">Visual insights into crime trends, categories, and neighborhood safety.</p>
+        </div>
+    </div>
+
+    <!-- Row 1: Crime Trend Over Time + Category Breakdown -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="dashboard-card border-top border-primary border-3 h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0"><i class="bi bi-activity text-primary me-2"></i>Crime Trend Over Time</h5>
+                    <span class="badge bg-primary bg-opacity-25 text-primary">All Categories</span>
+                </div>
+                <div style="position: relative; height: 320px;">
+                    <canvas id="crimeTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="dashboard-card border-top border-info border-3 h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0"><i class="bi bi-pie-chart text-info me-2"></i>By Category</h5>
+                    <select id="categoryYearFilter" class="form-select form-select-sm bg-dark text-light border-secondary" style="width: auto; min-width: 100px;">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div style="position: relative; height: 320px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Multi-line Category Trends -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="dashboard-card border-top border-warning border-3 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0"><i class="bi bi-graph-up-arrow text-warning me-2"></i>Category Trends Over Time</h5>
+                    <span class="badge bg-warning bg-opacity-25 text-warning">Per Category Breakdown</span>
+                </div>
+                <div style="position: relative; height: 360px;">
+                    <canvas id="categoryTrendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Neighborhood Rankings -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="dashboard-card border-top border-danger border-3 h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0"><i class="bi bi-exclamation-diamond text-danger me-2"></i>Most Dangerous Zones</h5>
+                    <select id="dangerousYearFilter" class="form-select form-select-sm bg-dark text-light border-secondary" style="width: auto; min-width: 100px;">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div style="position: relative; height: 340px;">
+                    <canvas id="dangerousChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dashboard-card border-top border-success border-3 h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-light mb-0"><i class="bi bi-shield-check text-success me-2"></i>Safest Zones</h5>
+                    <span class="badge bg-success bg-opacity-25 text-success">Lowest Crime Count</span>
+                </div>
+                <div style="position: relative; height: 340px;">
+                    <canvas id="safestChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // ── Shared Chart.js Defaults ──
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.borderColor = 'rgba(148, 163, 184, 0.1)';
+    Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+
+    const PRIMARY = '#1d4ed8';
+    const INFO = '#38bdf8';
+    const WARNING = '#f59e0b';
+    const DANGER = '#ef4444';
+    const SUCCESS = '#10b981';
+
+    // Fallback palette when CrimeCategory doesn't have a color
+    const fallbackPalette = [
+        '#6366f1', '#f43f5e', '#14b8a6', '#f97316', '#a855f7',
+        '#06b6d4', '#eab308', '#ec4899', '#84cc16', '#64748b'
+    ];
+
+    function getColor(colorCode, index) {
+        return colorCode && colorCode !== '' ? colorCode : fallbackPalette[index % fallbackPalette.length];
+    }
+
+    function hexToRgba(hex, alpha) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    // ── Chart instances ──
+    let crimeTrendChart, categoryChart, categoryTrendsChart, dangerousChart, safestChart;
+
+    // ═══════════════════════════════════════
+    // 1. Crime Trend Over Time (Area Chart)
+    // ═══════════════════════════════════════
+    async function loadCrimeTrend() {
+        const res = await fetch('/Analytics/GetCrimeTrend');
+        const data = await res.json();
+
+        const ctx = document.getElementById('crimeTrendChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+        gradient.addColorStop(0, hexToRgba(PRIMARY, 0.4));
+        gradient.addColorStop(1, hexToRgba(PRIMARY, 0.0));
+
+        crimeTrendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.year),
+                datasets: [{
+                    label: 'Total Crimes',
+                    data: data.map(d => d.totalCrimes),
+                    borderColor: PRIMARY,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: PRIMARY,
+                    pointBorderColor: '#1e293b',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        borderColor: PRIMARY,
+                        borderWidth: 1,
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { weight: '600' } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ═══════════════════════════════════════
+    // 2. Category Breakdown (Doughnut)
+    // ═══════════════════════════════════════
+    async function loadCategoryBreakdown(year) {
+        const url = year ? `/Analytics/GetCategoryBreakdown?year=${year}` : '/Analytics/GetCategoryBreakdown';
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (categoryChart) categoryChart.destroy();
+
+        const colors = data.map((d, i) => getColor(d.colorCode, i));
+
+        categoryChart = new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: data.map(d => d.categoryName),
+                datasets: [{
+                    data: data.map(d => d.totalCrimes),
+                    backgroundColor: colors.map(c => hexToRgba(c, 0.75)),
+                    borderColor: colors,
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 16,
+                            usePointStyle: true,
+                            pointStyleWidth: 10,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        borderColor: INFO,
+                        borderWidth: 1,
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                }
+            }
+        });
+    }
+
+    // ═══════════════════════════════════════
+    // 3. Category Trends Over Time (Multi-line)
+    // ═══════════════════════════════════════
+    async function loadCategoryTrends() {
+        const res = await fetch('/Analytics/GetCategoryTrends');
+        const data = await res.json();
+
+        const allYears = [...new Set(data.flatMap(d => d.dataPoints.map(p => p.year)))].sort();
+
+        const datasets = data.map((cat, i) => {
+            const color = getColor(cat.colorCode, i);
+            return {
+                label: cat.categoryName,
+                data: allYears.map(year => {
+                    const point = cat.dataPoints.find(p => p.year === year);
+                    return point ? point.totalCrimes : 0;
+                }),
+                borderColor: color,
+                backgroundColor: hexToRgba(color, 0.1),
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                borderWidth: 2.5,
+                fill: false
+            };
+        });
+
+        categoryTrendsChart = new Chart(document.getElementById('categoryTrendsChart'), {
+            type: 'line',
+            data: { labels: allYears, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyleWidth: 10,
+                            font: { size: 12, weight: '500' }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        borderColor: WARNING,
+                        borderWidth: 1,
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { weight: '600' } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, precision: 0 }
+                    }
+                }
+            }
+        });
+    }
+
+    // ═══════════════════════════════════════
+    // 4. Most Dangerous Neighborhoods (Horizontal Bar)
+    // ═══════════════════════════════════════
+    async function loadDangerousNeighborhoods(year) {
+        let url = '/Analytics/GetNeighborhoodRankings?top=10';
+        if (year) url += `&year=${year}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (dangerousChart) dangerousChart.destroy();
+
+        dangerousChart = new Chart(document.getElementById('dangerousChart'), {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.neighborhoodName),
+                datasets: [{
+                    label: 'Total Crimes',
+                    data: data.map(d => d.totalCrimes),
+                    backgroundColor: data.map((_, i) => hexToRgba(DANGER, 0.3 + (0.7 * (data.length - i) / data.length))),
+                    borderColor: DANGER,
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        borderColor: DANGER,
+                        borderWidth: 1,
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const item = data[context.dataIndex];
+                                return `City: ${item.cityName}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, precision: 0 }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { weight: '500' } }
+                    }
+                }
+            }
+        });
+
+        // Also load safest (reversed)
+        loadSafestNeighborhoods(year);
+    }
+
+    // ═══════════════════════════════════════
+    // 5. Safest Neighborhoods (Horizontal Bar, reversed)
+    // ═══════════════════════════════════════
+    async function loadSafestNeighborhoods(year) {
+        let url = '/Analytics/GetNeighborhoodRankings?top=100';
+        if (year) url += `&year=${year}`;
+        const res = await fetch(url);
+        let data = await res.json();
+
+        // Reverse to get safest first; take bottom 10
+        data = data.reverse().slice(0, 10);
+
+        if (safestChart) safestChart.destroy();
+
+        safestChart = new Chart(document.getElementById('safestChart'), {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.neighborhoodName),
+                datasets: [{
+                    label: 'Total Crimes',
+                    data: data.map(d => d.totalCrimes),
+                    backgroundColor: data.map((_, i) => hexToRgba(SUCCESS, 0.3 + (0.7 * (data.length - i) / data.length))),
+                    borderColor: SUCCESS,
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        borderColor: SUCCESS,
+                        borderWidth: 1,
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const item = data[context.dataIndex];
+                                return `City: ${item.cityName}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, precision: 0 }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { weight: '500' } }
+                    }
+                }
+            }
+        });
+    }
+
+    // ── Populate Year Filters ──
+    async function populateYearFilters() {
+        const res = await fetch('/Analytics/GetCrimeTrend');
+        const data = await res.json();
+        const years = data.map(d => d.year).sort((a, b) => b - a);
+
+        ['categoryYearFilter', 'dangerousYearFilter'].forEach(filterId => {
+            const select = document.getElementById(filterId);
+            years.forEach(y => {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                select.appendChild(opt);
+            });
+        });
+    }
+
+    // ── Event Listeners ──
+    document.getElementById('categoryYearFilter').addEventListener('change', function() {
+        loadCategoryBreakdown(this.value || null);
+    });
+
+    document.getElementById('dangerousYearFilter').addEventListener('change', function() {
+        loadDangerousNeighborhoods(this.value || null);
+    });
+
+    // ── Init ──
+    populateYearFilters();
+    loadCrimeTrend();
+    loadCategoryBreakdown();
+    loadCategoryTrends();
+    loadDangerousNeighborhoods();
+</script>
+}

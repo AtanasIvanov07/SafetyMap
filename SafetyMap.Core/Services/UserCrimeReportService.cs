@@ -39,6 +39,19 @@ namespace SafetyMap.Core.Services
 
         public async Task SubmitReportAsync(UserCrimeReportCreateDTO dto, string userId)
         {
+            var isDuplicate = await _context.UserCrimeReports.AnyAsync(r => 
+                r.UserId == userId && 
+                r.DateOfIncident == dto.DateOfIncident && 
+                r.CrimeCategoryId == dto.CrimeCategoryId && 
+                r.CityId == dto.CityId &&
+                r.NeighborhoodId == dto.NeighborhoodId &&
+                r.Description == dto.Description);
+
+            if (isDuplicate)
+            {
+                throw new InvalidOperationException("A duplicate report for this incident has already been submitted.");
+            }
+
             var report = new UserCrimeReport
             {
                 Id = Guid.NewGuid(),

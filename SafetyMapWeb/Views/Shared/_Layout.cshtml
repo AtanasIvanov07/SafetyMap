@@ -97,6 +97,12 @@
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2" asp-area=""
+                                            asp-controller="Analytics" asp-action="Index">
+                                            <i class="bi bi-graph-up text-muted"></i> Analytics Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" asp-area=""
                                             asp-controller="AdminReports" asp-action="Index">
                                             <i class="bi bi-inbox text-muted"></i> Pending Crime Reports
                                         </a>
@@ -138,6 +144,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
