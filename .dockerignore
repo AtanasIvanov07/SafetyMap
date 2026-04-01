@@ -1,0 +1,29 @@
+**/.git
+**/.vs
+**/.vscode
+**/.idea
+**/.dotnet
+**/bin
+**/obj
+**/Debug
+**/Release
+**/Logs
+**/logs
+**/*.user
+**/*.suo
+**/*.log
+**/node_modules
+**/TestResults
+
+# Docker files themselves
+**/Dockerfile*
+**/docker-compose*
+**/.dockerignore
+
+# GitHub
+**/.github
+
+# Misc
+**/LICENSE
+**/README.md
+**/mailtrap_extracted

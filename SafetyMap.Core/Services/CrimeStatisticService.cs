@@ -93,6 +93,26 @@ namespace SafetyMap.Core.Services
 
         public async Task CreateAsync(CrimeStatisticCreateDTO dto)
         {
+
+            var existing = await _context.CrimeStatistics
+                .FirstOrDefaultAsync(c => c.NeighborhoodId == dto.NeighborhoodId
+                    && c.CrimeCategoryId == dto.CrimeCategoryId
+                    && c.Year == dto.Year);
+
+            if (existing != null)
+            {
+
+                existing.CountOfCrimes = dto.CountOfCrimes;
+                await _context.SaveChangesAsync();
+
+                await UpdateTrendForYearAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year);
+                await UpdateTrendForYearAsync(dto.NeighborhoodId, dto.CrimeCategoryId, dto.Year + 1);
+                await _context.SaveChangesAsync();
+
+                await NotifySubscribersAsync(dto.NeighborhoodId);
+                return;
+            }
+
             var crimeStatistic = new CrimeStatistic
             {
                 Id = Guid.NewGuid(),

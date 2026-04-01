@@ -1,0 +1,64 @@
+# =============================================================================
+# SafetyMap Docker Compose — App + SQL Server
+# =============================================================================
+# Usage:
+#   docker compose up --build        (build and start everything)
+#   docker compose up -d             (start in background)
+#   docker compose down              (stop everything)
+#   docker compose down -v           (stop and DELETE database data)
+# =============================================================================
+
+services:
+  # ---------------------
+  # SQL Server Database
+  # ---------------------
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: safetymap-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "SafetyMap@2026!"   # Change this in production!
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "SafetyMap@2026!" -Q "SELECT 1" -C || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ---------------------
+  # SafetyMap Web App
+  # ---------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: safetymap-web
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SafetyMap;User Id=sa;Password=SafetyMap@2026!;Trust Server Certificate=True
+      # ── Override these with your real secrets ──
+      # - Authentication__Google__ClientId=your-google-client-id
+      # - Authentication__Google__ClientSecret=your-google-client-secret
+      # - Authentication__Facebook__AppId=your-facebook-app-id
+      # - Authentication__Facebook__AppSecret=your-facebook-app-secret
+      # - CloudinarySettings__CloudName=your-cloud-name
+      # - CloudinarySettings__ApiKey=your-api-key
+      # - CloudinarySettings__ApiSecret=your-api-secret
+      # - Mailtrap__Username=your-email
+      # - Mailtrap__Password=your-password
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+    driver: local

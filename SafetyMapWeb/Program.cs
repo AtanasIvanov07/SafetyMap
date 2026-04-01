@@ -32,31 +32,39 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
 });
 
-builder.Services.AddAuthentication()
-    .AddGoogle(options =>
-    {
-        var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
-        options.ClientId = googleAuthNSection["ClientId"] ?? string.Empty;
-        options.ClientSecret = googleAuthNSection["ClientSecret"] ?? string.Empty;
-    })
-    .AddFacebook(options =>
-    {
-        var facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
-        options.AppId = facebookAuthNSection["AppId"] ?? string.Empty;
-        options.AppSecret = facebookAuthNSection["AppSecret"] ?? string.Empty;
+var authBuilder = builder.Services.AddAuthentication();
 
-        // Clear the default scopes to avoid requesting 'email' which Facebook restricts
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+if (!string.IsNullOrEmpty(googleClientId))
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+    });
+}
+
+var facebookAppId = builder.Configuration["Authentication:Facebook:AppId"];
+if (!string.IsNullOrEmpty(facebookAppId))
+{
+    authBuilder.AddFacebook(options =>
+    {
+        options.AppId = facebookAppId;
+        options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ?? string.Empty;
         options.Scope.Clear();
     });
+}
 
 // Cloudinary
 var cloudinarySettings = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
-if (cloudinarySettings != null)
-{
-    var account = new Account(cloudinarySettings.CloudName, cloudinarySettings.ApiKey, cloudinarySettings.ApiSecret);
-    var cloudinary = new Cloudinary(account);
-    builder.Services.AddSingleton(cloudinary);
-}
+
+var cloudName = !string.IsNullOrEmpty(cloudinarySettings?.CloudName) ? cloudinarySettings.CloudName : "dummy_cloud_name";
+var apiKey = !string.IsNullOrEmpty(cloudinarySettings?.ApiKey) ? cloudinarySettings.ApiKey : "dummy_api_key";
+var apiSecret = !string.IsNullOrEmpty(cloudinarySettings?.ApiSecret) ? cloudinarySettings.ApiSecret : "dummy_api_secret";
+
+var account = new Account(cloudName, apiKey, apiSecret);
+var cloudinary = new Cloudinary(account);
+builder.Services.AddSingleton(cloudinary);
 
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<ICrimeCategoryService, CrimeCategoryService>();
@@ -104,6 +112,9 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        var context = services.GetRequiredService<SafetyMapDbContext>();
+        await context.Database.MigrateAsync();
+        
         await DbInitializer.InitializeAsync(services);
     }
     catch (Exception ex)
@@ -111,5 +122,8 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("An error occurred while seeding the database: " + ex.Message);
     }
 }
+
+// Health check endpoint for Docker
+app.MapGet("/health", () => Results.Ok("Healthy"));
 
 app.Run();

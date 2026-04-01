@@ -105,3 +105,6 @@ node_modules/
 
 # Local SDK and NuGet cache
 .dotnet/
+
+# Docker settings (may contain secrets)
+appsettings.Docker.json
