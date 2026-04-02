@@ -52,6 +52,16 @@ if (!string.IsNullOrEmpty(facebookAppId))
         options.AppId = facebookAppId;
         options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ?? string.Empty;
         options.Scope.Clear();
+
+        options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+        {
+            OnRedirectToAuthorizationEndpoint = context =>
+            {
+                // Specifically for localhost development, this prevents Facebook from forcing HTTPS
+                context.Response.Redirect(context.RedirectUri.Replace("https://", "http://"));
+                return Task.CompletedTask;
+            }
+        };
     });
 }
 
@@ -114,7 +124,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<SafetyMapDbContext>();
         await context.Database.MigrateAsync();
-        
+
         await DbInitializer.InitializeAsync(services);
     }
     catch (Exception ex)

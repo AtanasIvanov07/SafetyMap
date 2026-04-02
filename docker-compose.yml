@@ -41,19 +41,8 @@ services:
     container_name: safetymap-web
     ports:
       - "8080:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=SafetyMap;User Id=sa;Password=SafetyMap@2026!;Trust Server Certificate=True
-      # ── Override these with your real secrets ──
-      # - Authentication__Google__ClientId=your-google-client-id
-      # - Authentication__Google__ClientSecret=your-google-client-secret
-      # - Authentication__Facebook__AppId=your-facebook-app-id
-      # - Authentication__Facebook__AppSecret=your-facebook-app-secret
-      # - CloudinarySettings__CloudName=your-cloud-name
-      # - CloudinarySettings__ApiKey=your-api-key
-      # - CloudinarySettings__ApiSecret=your-api-secret
-      # - Mailtrap__Username=your-email
-      # - Mailtrap__Password=your-password
+    env_file:
+      - .env
     depends_on:
       sqlserver:
         condition: service_healthy
